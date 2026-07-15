@@ -9,7 +9,5 @@ htmlcov/
 node_modules/
 dist/
 frontend/coverage/
-workspace/models.json
-workspace/sessions/
-workspace/runs/
-workspace/runtime/
+backend/.env
+workspace/

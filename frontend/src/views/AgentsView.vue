@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { Bot, MessageSquare, Pencil, Plus, Trash2 } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
+import { api } from '@/api/client'
+import type { Agent, ModelConfig } from '@/types'
+const items=ref<Agent[]>([]),models=ref<ModelConfig[]>([]),error=ref('')
+async function load(){try{[items.value,models.value]=await Promise.all([api<Agent[]>('/api/agents'),api<ModelConfig[]>('/api/models')])}catch(e){error.value=(e as Error).message}}
+function modelName(id:string){return models.value.find(item=>item.id===id)?.name||'模型不存在'}
+async function remove(item:Agent){if(item.is_builtin||!confirm(`确定删除“${item.name}”吗？`))return;try{await api(`/api/agents/${item.id}`,{method:'DELETE'});await load()}catch(e){error.value=(e as Error).message}}
+onMounted(load)
+</script>
+<template><div class="page-heading"><div><div class="eyebrow">AGENT REGISTRY</div><h1>智能体</h1><p class="subtitle">组合模型、工具、技能和独立工作目录。</p></div><RouterLink class="button button--lime" to="/agents/new"><Plus :size="15"/>新建智能体</RouterLink></div><div v-if="error" class="error">{{error}}</div><div v-if="items.length" class="table-wrap"><table class="data-table"><thead><tr><th>智能体</th><th>模型</th><th>能力</th><th>工作目录</th><th>状态</th><th></th></tr></thead><tbody><tr v-for="item in items" :key="item.id"><td><div class="agent-title"><span>{{item.name.slice(0,1)}}</span><div><div class="primary-cell">{{item.name}} <em v-if="item.is_builtin">主</em></div><div class="cell-sub">{{item.description||'暂无描述'}}</div></div></div></td><td>{{modelName(item.model_id)}}</td><td>{{item.tool_ids.length}} 工具 · {{item.skill_ids.length}} 技能</td><td><div class="path-cell">{{item.work_directory}}</div></td><td><span class="badge" :class="item.enabled?'badge--ok':''">{{item.enabled?'可运行':'已停用'}}</span></td><td><div class="row-actions"><RouterLink class="icon-button" :to="`/agents/${item.id}/run`" title="运行"><MessageSquare :size="14"/></RouterLink><RouterLink class="icon-button" :to="`/agents/${item.id}/edit`" title="编辑"><Pencil :size="14"/></RouterLink><button v-if="!item.is_builtin" class="icon-button" title="删除" @click="remove(item)"><Trash2 :size="14"/></button></div></td></tr></tbody></table></div><div v-else class="empty"><div><Bot/><h2>还没有智能体</h2><p>创建智能体，配置它的模型和能力。</p></div></div></template>
+<style scoped>.agent-title{display:flex;align-items:center;gap:9px}.agent-title>span{width:32px;height:32px;display:grid;place-items:center;background:#e4f2cc;color:#405b1a;font-weight:800}.agent-title em{font-style:normal;font-size:8px;background:var(--ink);color:white;padding:2px 4px}.path-cell{max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:9px ui-monospace,monospace;color:var(--muted)}</style>

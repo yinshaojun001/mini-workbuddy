@@ -1,0 +1,14 @@
+.DS_Store
+.superpowers/
+.venv/
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+node_modules/
+dist/
+frontend/coverage/
+workspace/models.json
+workspace/sessions/
+workspace/runs/
+workspace/runtime/

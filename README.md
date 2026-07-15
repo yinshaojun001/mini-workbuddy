@@ -21,6 +21,16 @@ workspace/  首次启动自动创建的配置、技能、会话和运行数据
 
 ## 启动后端
 
+推荐直接在项目根目录一键启动前后端：
+
+```bash
+./start.sh
+```
+
+脚本会在首次运行时自动安装缺失依赖，启动成功后访问 [http://127.0.0.1:5173](http://127.0.0.1:5173)。按 `Ctrl+C` 会同时停止前后端服务。
+
+也可以分别启动。后端命令：
+
 ```bash
 cd backend
 uv sync
@@ -29,7 +39,7 @@ uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 默认数据目录是项目根目录的 `workspace/`。可从 `backend/.env.example` 创建本地 `.env` 并覆盖路径、工具轮次和超时设置。
 
-## 启动前端
+前端命令：
 
 ```bash
 cd frontend
@@ -68,4 +78,3 @@ npm run build
 - 命令默认在 Agent 工作目录中运行，并受超时与输出大小限制。
 - 子进程环境会移除名称中包含 `KEY`、`TOKEN` 或 `SECRET` 的变量。
 - Skill ZIP 会拒绝路径穿越、绝对路径、符号链接、多个 `SKILL.md` 入口和超限内容。
-

@@ -34,7 +34,7 @@ workspace/  首次启动自动创建的配置、技能、会话和运行数据
 ```bash
 cd backend
 uv sync
-uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
 ```
 
 默认数据目录是项目根目录的 `workspace/`。可从 `backend/.env.example` 创建本地 `.env` 并覆盖路径、工具轮次和超时设置。
@@ -47,7 +47,13 @@ npm install
 npm run dev
 ```
 
-打开 [http://localhost:5173](http://localhost:5173)。Vite 会把 `/api` 请求代理到 `http://127.0.0.1:8000`。
+打开 [http://localhost:5173](http://localhost:5173)。Vite 会把 `/api` 请求代理到 `http://127.0.0.1:8001`。
+
+一键脚本默认使用前端端口 `5173` 和后端端口 `8001`。需要临时覆盖时可以执行：
+
+```bash
+MINI_WORKBUDDY_FRONTEND_PORT=5175 MINI_WORKBUDDY_BACKEND_PORT=8010 ./start.sh
+```
 
 ## 使用顺序
 

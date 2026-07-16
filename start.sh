@@ -5,6 +5,8 @@ set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$ROOT_DIR/backend"
 FRONTEND_DIR="$ROOT_DIR/frontend"
+BACKEND_PORT="${MINI_WORKBUDDY_BACKEND_PORT:-8001}"
+FRONTEND_PORT="${MINI_WORKBUDDY_FRONTEND_PORT:-5173}"
 BACKEND_PID=""
 FRONTEND_PID=""
 
@@ -63,8 +65,8 @@ wait_for_url() {
 require_command uv
 require_command npm
 require_command curl
-ensure_port_free 8000
-ensure_port_free 5173
+ensure_port_free "$BACKEND_PORT"
+ensure_port_free "$FRONTEND_PORT"
 
 if [[ ! -x "$BACKEND_DIR/.venv/bin/python" ]]; then
   info "正在安装后端依赖..."
@@ -78,27 +80,28 @@ fi
 
 trap cleanup INT TERM EXIT
 
-info "正在启动 FastAPI（http://127.0.0.1:8000）..."
+info "正在启动 FastAPI（http://127.0.0.1:${BACKEND_PORT}）..."
 (
   cd "$BACKEND_DIR"
-  exec uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
+  exec uv run uvicorn app.main:app --host 127.0.0.1 --port "$BACKEND_PORT"
 ) &
 BACKEND_PID=$!
 
-info "正在启动 Vue（http://127.0.0.1:5173）..."
+info "正在启动 Vue（http://127.0.0.1:${FRONTEND_PORT}）..."
 (
   cd "$FRONTEND_DIR"
-  exec npm run dev -- --host 127.0.0.1 --port 5173
+  MINI_WORKBUDDY_API_TARGET="http://127.0.0.1:${BACKEND_PORT}" \
+    exec npm run dev -- --host 127.0.0.1 --port "$FRONTEND_PORT"
 ) &
 FRONTEND_PID=$!
 
-wait_for_url "后端" "http://127.0.0.1:8000/api/health" "$BACKEND_PID"
-wait_for_url "前端" "http://127.0.0.1:5173/" "$FRONTEND_PID"
+wait_for_url "后端" "http://127.0.0.1:${BACKEND_PORT}/api/health" "$BACKEND_PID"
+wait_for_url "前端" "http://127.0.0.1:${FRONTEND_PORT}/" "$FRONTEND_PID"
 
 printf '\n'
 info "Mini-workbuddy 已启动"
-printf '  前端：    http://127.0.0.1:5173\n'
-printf '  API 文档：http://127.0.0.1:8000/docs\n'
+printf '  前端：    http://127.0.0.1:%s\n' "$FRONTEND_PORT"
+printf '  API 文档：http://127.0.0.1:%s/docs\n' "$BACKEND_PORT"
 printf '  停止服务：Ctrl+C\n\n'
 
 while kill -0 "$BACKEND_PID" 2>/dev/null && kill -0 "$FRONTEND_PID" 2>/dev/null; do
@@ -106,4 +109,3 @@ while kill -0 "$BACKEND_PID" 2>/dev/null && kill -0 "$FRONTEND_PID" 2>/dev/null;
 done
 
 fail "检测到服务意外退出，请查看上方日志。"
-

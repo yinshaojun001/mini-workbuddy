@@ -75,6 +75,12 @@ npm test -- --run
 npm run build
 ```
 
+## 生产部署
+
+生产环境通过 GitHub Actions 构建前端和后端镜像，再经 SSH 上传到服务器。服务器只负责加载镜像和运行 FastAPI 容器，前端静态文件由宿主机 Nginx 提供。
+
+部署文件位于 `deploy/`，工作流位于 `.github/workflows/deploy.yml`。服务器需要配置 `SERVER_HOST`、`SERVER_PORT`、`SERVER_USER` 和 `SERVER_SSH_KEY` 四个 GitHub Actions Secrets。运行数据必须持久化在 `/opt/mini-workbuddy/workspace`，不能放进 release 目录。
+
 测试模型适配与 Agent 循环时使用假模型，不需要真实 API Key。真实对话和模型连通性测试需要在本地配置有效密钥。
 
 ## 文件与命令边界

@@ -1,0 +1,95 @@
+name: Test and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: mini-workbuddy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.8.x"
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test backend
+        working-directory: backend
+        run: |
+          uv sync --locked
+          uv run pytest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Test and build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm test -- --run
+          npm run build
+
+      - name: Build deployable backend image
+        run: |
+          docker build \
+            --file backend/Dockerfile \
+            --tag "mini-workbuddy-backend:${GITHUB_SHA}" \
+            .
+          docker save "mini-workbuddy-backend:${GITHUB_SHA}" | gzip -1 > backend-image.tar.gz
+
+      - name: Configure SSH
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SERVER_SSH_KEY" > ~/.ssh/mini-workbuddy-deploy
+          chmod 600 ~/.ssh/mini-workbuddy-deploy
+          ssh-keyscan -p "$SERVER_PORT" "$SERVER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload release
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          SSH="ssh -i ~/.ssh/mini-workbuddy-deploy -p ${SERVER_PORT}"
+          $SSH "${SERVER_USER}@${SERVER_HOST}" \
+            "mkdir -p /opt/mini-workbuddy/releases/${GITHUB_SHA}/frontend"
+          rsync -az --delete -e "$SSH" \
+            frontend/dist/ \
+            "${SERVER_USER}@${SERVER_HOST}:/opt/mini-workbuddy/releases/${GITHUB_SHA}/frontend/"
+          rsync -az -e "$SSH" \
+            backend-image.tar.gz \
+            deploy/server-deploy.sh \
+            "${SERVER_USER}@${SERVER_HOST}:/opt/mini-workbuddy/releases/${GITHUB_SHA}/"
+
+      - name: Activate release
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -i ~/.ssh/mini-workbuddy-deploy -p "$SERVER_PORT" \
+            "${SERVER_USER}@${SERVER_HOST}" \
+            "bash /opt/mini-workbuddy/releases/${GITHUB_SHA}/server-deploy.sh ${GITHUB_SHA}"

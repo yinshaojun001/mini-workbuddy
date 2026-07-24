@@ -1,6 +1,8 @@
 from typing import Any
 
 from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 
@@ -33,3 +35,18 @@ def register_error_handlers(app: FastAPI) -> None:
             },
         )
 
+    @app.exception_handler(RequestValidationError)
+    async def handle_validation_error(request: Request, error: RequestValidationError) -> JSONResponse:
+        public_birth = request.url.path.startswith("/api/public/apps/") and request.url.path.endswith("/sessions")
+        code = "INVALID_BIRTH_INPUT" if public_birth else "VALIDATION_ERROR"
+        message = "出生信息有误" if public_birth else "请求参数有误"
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": code,
+                    "message": message,
+                    "details": {"fields": jsonable_encoder(error.errors())},
+                }
+            },
+        )

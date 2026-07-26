@@ -98,11 +98,10 @@ COMMAND_TIMEOUT_SECONDS=30
 
 两个 HMAC 密钥不得相同，也不能使用仓库中的开发默认值。运行数据持久化在 `/opt/mini-workbuddy/workspace`，不能放入 release 目录。部署脚本会依次检查排盘服务和 FastAPI；任一检查失败时恢复上一版容器镜像和 `current` 静态目录链接。
 
-首次启用公开站点时，将 `deploy/fortune-nginx.conf` 安装为 Nginx site，确认配置后 reload：
+首次启用公开站点时，将 `deploy/fortune-nginx.conf` 安装到服务器使用的 `conf.d` 目录，确认配置后 reload：
 
 ```bash
-sudo cp deploy/fortune-nginx.conf /etc/nginx/sites-available/fortune.inshocking.com
-sudo ln -s /etc/nginx/sites-available/fortune.inshocking.com /etc/nginx/sites-enabled/fortune.inshocking.com
+sudo cp deploy/fortune-nginx.conf /etc/nginx/conf.d/fortune.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```

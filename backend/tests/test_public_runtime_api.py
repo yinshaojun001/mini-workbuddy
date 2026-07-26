@@ -74,6 +74,12 @@ def test_origin_is_rejected_before_cookie_is_issued(client):
     assert "set-cookie" not in response.headers
 
 
+def test_public_metadata_contains_only_safe_location_fields(client):
+    payload = client.get("/api/public/apps/fortune").json()
+    beijing = next(item for item in payload["locations"] if item["code"] == "110100")
+    assert beijing == {"code": "110100", "parent_code": "110000", "name": "北京市", "level": "city"}
+
+
 def test_public_birth_validation_and_body_limit_use_public_errors(client):
     invalid = client.post(
         "/api/public/apps/fortune/sessions",

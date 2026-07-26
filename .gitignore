@@ -8,6 +8,8 @@ __pycache__/
 htmlcov/
 node_modules/
 dist/
+test-results/
+playwright-report/
 frontend/coverage/
 backend/.env
 workspace/

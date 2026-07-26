@@ -30,10 +30,25 @@ export function calculateChart(request: ChartRequest) {
   }
 
   const chart = calculateBaziChart(input);
+  const availablePillars = Object.entries(chart.pillars).filter((entry) => entry[1] !== null);
+  const fiveElements = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  const countElement = (element: unknown): void => {
+    if (typeof element !== "string" || !(element in fiveElements)) {
+      throw new RangeError("Engine returned an unknown five-element value");
+    }
+    fiveElements[element as keyof typeof fiveElements] += 1;
+  };
+  for (const [, pillar] of availablePillars) {
+    countElement(pillar!.element);
+    countElement(pillar!.branchElement);
+  }
   return {
     chart: {
       pillars: chart.pillars,
       day_master: chart.dayMaster,
+      five_elements: fiveElements,
+      ten_gods: Object.fromEntries(availablePillars.map(([name, pillar]) => [name, pillar!.stemTenGod])),
+      hidden_stems: Object.fromEntries(availablePillars.map(([name, pillar]) => [name, pillar!.hiddenStems])),
       da_yun: chart.daYun,
       interactions: chart.interactions,
       solar_time: chart.solarTimeInfo,

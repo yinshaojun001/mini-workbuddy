@@ -20,6 +20,9 @@ test("matches the published OpenFate Four Pillars example", () => {
     ["戊寅", "甲子", "甲午", "庚午"],
   );
   assert.equal(result.chart.day_master.element, "wood");
+  assert.equal(Object.values(result.chart.five_elements).reduce((total, count) => total + count, 0), 8);
+  assert.equal(result.chart.ten_gods.day, "日主");
+  assert(result.chart.hidden_stems.year.length > 0);
   assert.equal(result.policy.day_boundary_mode, "ZI_HOUR_23");
   assert.equal(result.chart.metadata.trueSolarTimeApplied, false);
 });
@@ -55,6 +58,7 @@ test("returns a three-pillar chart when birth time is unknown", () => {
     true_solar_time: false,
   });
   assert.equal(result.chart.pillars.hour, null);
+  assert.equal(Object.values(result.chart.five_elements).reduce((total, count) => total + count, 0), 6);
   assert.equal(result.chart.calendar.civilSolar.hour, null);
   assert.equal(result.chart.solar_time, null);
 });

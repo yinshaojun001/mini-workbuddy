@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.config import get_settings
 from app.errors import AppError
 from app.fortune.chart_client import ChartClient
+from app.fortune.cities import city_records
 from app.fortune.models import BirthInput
 from app.public_runtime.identity import client_ip, hmac_hash, visitor_identity
 from app.public_runtime.rate_limit import public_rate_limiter
@@ -58,12 +59,17 @@ def get_public_app(slug: str, request: Request, response: Response) -> dict:
     app = public_app(settings, slug)
     owner_hash, ip_hash = identities(request, response)
     _, quota = repositories(settings)
+    locations = [
+        {key: record[key] for key in ("code", "parent_code", "name", "level")}
+        for record in city_records().values()
+    ]
     return {
         "name": app["name"],
         "slug": app["slug"],
         "daily_limit": app["daily_limit"],
         "ttl_hours": app["ttl_hours"],
         "max_questions": app["max_questions"],
+        "locations": locations,
         "quota": {
             "remaining": quota.remaining(owner_hash, ip_hash, app["daily_limit"]),
             "resets_at": quota.resets_at(),

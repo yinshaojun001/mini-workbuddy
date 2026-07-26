@@ -1,0 +1,23 @@
+{
+  "name": "fortune-bazi-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/server.js",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@openfate/bazi-engine": "1.1.1",
+    "@openfate/true-solar-time": "4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.30",
+    "tsx": "4.20.3",
+    "typescript": "5.8.3"
+  }
+}

@@ -1,0 +1,2956 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "GeoNames",
+    "url": "https://download.geonames.org/export/dump/CN.zip",
+    "license": "CC BY 4.0",
+    "input_file": "CN.txt",
+    "input_sha256": "2c8a690f51b35fc75b15accdb002aecfe6e72b09bc2f9dac2fbe87ad849f0481"
+  },
+  "records": [
+    {
+      "code": "110000",
+      "parent_code": "CN",
+      "name": "北京市",
+      "longitude": 116.39706,
+      "geoname_id": 2038349,
+      "level": "province"
+    },
+    {
+      "code": "110100",
+      "parent_code": "110000",
+      "name": "北京市",
+      "longitude": 116.41549,
+      "geoname_id": 11876380,
+      "level": "city"
+    },
+    {
+      "code": "120000",
+      "parent_code": "CN",
+      "name": "天津市",
+      "longitude": 117.33333,
+      "geoname_id": 1792943,
+      "level": "province"
+    },
+    {
+      "code": "120100",
+      "parent_code": "120000",
+      "name": "天津市",
+      "longitude": 117.30407,
+      "geoname_id": 12324202,
+      "level": "city"
+    },
+    {
+      "code": "130000",
+      "parent_code": "CN",
+      "name": "河北省",
+      "longitude": 115.66667,
+      "geoname_id": 1808773,
+      "level": "province"
+    },
+    {
+      "code": "130100",
+      "parent_code": "130000",
+      "name": "石家庄市",
+      "longitude": 114.56667,
+      "geoname_id": 1795266,
+      "level": "city"
+    },
+    {
+      "code": "130200",
+      "parent_code": "130000",
+      "name": "唐山市",
+      "longitude": 118.35,
+      "geoname_id": 1793343,
+      "level": "city"
+    },
+    {
+      "code": "130300",
+      "parent_code": "130000",
+      "name": "秦皇岛市",
+      "longitude": 119.2,
+      "geoname_id": 1797593,
+      "level": "city"
+    },
+    {
+      "code": "130400",
+      "parent_code": "130000",
+      "name": "邯郸市",
+      "longitude": 114.55,
+      "geoname_id": 1808961,
+      "level": "city"
+    },
+    {
+      "code": "130500",
+      "parent_code": "130000",
+      "name": "邢台市",
+      "longitude": 114.49,
+      "geoname_id": 1788925,
+      "level": "city"
+    },
+    {
+      "code": "130600",
+      "parent_code": "130000",
+      "name": "保定市",
+      "longitude": 115.18333,
+      "geoname_id": 1816969,
+      "level": "city"
+    },
+    {
+      "code": "130700",
+      "parent_code": "130000",
+      "name": "张家口市",
+      "longitude": 115.17642,
+      "geoname_id": 2033194,
+      "level": "city"
+    },
+    {
+      "code": "130800",
+      "parent_code": "130000",
+      "name": "承德市",
+      "longitude": 117.93,
+      "geoname_id": 2038085,
+      "level": "city"
+    },
+    {
+      "code": "130900",
+      "parent_code": "130000",
+      "name": "沧州市",
+      "longitude": 116.75,
+      "geoname_id": 1816078,
+      "level": "city"
+    },
+    {
+      "code": "131000",
+      "parent_code": "130000",
+      "name": "廊坊市",
+      "longitude": 116.63333,
+      "geoname_id": 1804539,
+      "level": "city"
+    },
+    {
+      "code": "131100",
+      "parent_code": "130000",
+      "name": "衡水市",
+      "longitude": 115.81667,
+      "geoname_id": 1808391,
+      "level": "city"
+    },
+    {
+      "code": "140000",
+      "parent_code": "CN",
+      "name": "山西省",
+      "longitude": 112.25,
+      "geoname_id": 1795912,
+      "level": "province"
+    },
+    {
+      "code": "140100",
+      "parent_code": "140000",
+      "name": "太原市",
+      "longitude": 112.3193,
+      "geoname_id": 1793510,
+      "level": "city"
+    },
+    {
+      "code": "140200",
+      "parent_code": "140000",
+      "name": "大同市",
+      "longitude": 113.63334,
+      "geoname_id": 2037794,
+      "level": "city"
+    },
+    {
+      "code": "140300",
+      "parent_code": "140000",
+      "name": "阳泉市",
+      "longitude": 113.49628,
+      "geoname_id": 1787346,
+      "level": "city"
+    },
+    {
+      "code": "140400",
+      "parent_code": "140000",
+      "name": "长治市",
+      "longitude": 112.88436,
+      "geoname_id": 1815461,
+      "level": "city"
+    },
+    {
+      "code": "140500",
+      "parent_code": "140000",
+      "name": "晋城市",
+      "longitude": 112.69257,
+      "geoname_id": 1805739,
+      "level": "city"
+    },
+    {
+      "code": "140600",
+      "parent_code": "140000",
+      "name": "朔州市",
+      "longitude": 112.54134,
+      "geoname_id": 6642609,
+      "level": "city"
+    },
+    {
+      "code": "140700",
+      "parent_code": "140000",
+      "name": "晋中市",
+      "longitude": 113.08783,
+      "geoname_id": 1805302,
+      "level": "city"
+    },
+    {
+      "code": "140800",
+      "parent_code": "140000",
+      "name": "运城市",
+      "longitude": 111.05372,
+      "geoname_id": 1785736,
+      "level": "city"
+    },
+    {
+      "code": "140900",
+      "parent_code": "140000",
+      "name": "忻州市",
+      "longitude": 112.38581,
+      "geoname_id": 6642630,
+      "level": "city"
+    },
+    {
+      "code": "141000",
+      "parent_code": "140000",
+      "name": "临汾市",
+      "longitude": 111.38177,
+      "geoname_id": 1803566,
+      "level": "city"
+    },
+    {
+      "code": "141100",
+      "parent_code": "140000",
+      "name": "吕梁市",
+      "longitude": 111.30538,
+      "geoname_id": 1802029,
+      "level": "city"
+    },
+    {
+      "code": "150000",
+      "parent_code": "CN",
+      "name": "内蒙古自治区",
+      "longitude": 114.75,
+      "geoname_id": 2035607,
+      "level": "province"
+    },
+    {
+      "code": "150100",
+      "parent_code": "150000",
+      "name": "呼和浩特市",
+      "longitude": 111.68875,
+      "geoname_id": 2036891,
+      "level": "city"
+    },
+    {
+      "code": "150200",
+      "parent_code": "150000",
+      "name": "包头市",
+      "longitude": 110.23535,
+      "geoname_id": 2038431,
+      "level": "city"
+    },
+    {
+      "code": "150300",
+      "parent_code": "150000",
+      "name": "乌海市",
+      "longitude": 106.90579,
+      "geoname_id": 1791248,
+      "level": "city"
+    },
+    {
+      "code": "150400",
+      "parent_code": "150000",
+      "name": "赤峰市",
+      "longitude": 119.11572,
+      "geoname_id": 2038066,
+      "level": "city"
+    },
+    {
+      "code": "150500",
+      "parent_code": "150000",
+      "name": "通辽市",
+      "longitude": 121.93534,
+      "geoname_id": 2036421,
+      "level": "city"
+    },
+    {
+      "code": "150600",
+      "parent_code": "150000",
+      "name": "鄂尔多斯市",
+      "longitude": 108.80946,
+      "geoname_id": 1806529,
+      "level": "city"
+    },
+    {
+      "code": "150700",
+      "parent_code": "150000",
+      "name": "呼伦贝尔市",
+      "longitude": 121.72176,
+      "geoname_id": 2036660,
+      "level": "city"
+    },
+    {
+      "code": "150800",
+      "parent_code": "150000",
+      "name": "巴彦淖尔市",
+      "longitude": 107.49485,
+      "geoname_id": 2038392,
+      "level": "city"
+    },
+    {
+      "code": "150900",
+      "parent_code": "150000",
+      "name": "乌兰察布市",
+      "longitude": 112.09115,
+      "geoname_id": 2034303,
+      "level": "city"
+    },
+    {
+      "code": "152200",
+      "parent_code": "150000",
+      "name": "兴安盟",
+      "longitude": 121.24169,
+      "geoname_id": 2036898,
+      "level": "city"
+    },
+    {
+      "code": "152500",
+      "parent_code": "150000",
+      "name": "锡林郭勒盟",
+      "longitude": 115.72789,
+      "geoname_id": 2033827,
+      "level": "city"
+    },
+    {
+      "code": "152900",
+      "parent_code": "150000",
+      "name": "阿拉善盟",
+      "longitude": 102.84579,
+      "geoname_id": 1818128,
+      "level": "city"
+    },
+    {
+      "code": "210000",
+      "parent_code": "CN",
+      "name": "辽宁省",
+      "longitude": 122.66667,
+      "geoname_id": 2036115,
+      "level": "province"
+    },
+    {
+      "code": "210100",
+      "parent_code": "210000",
+      "name": "沈阳市",
+      "longitude": 123.13694,
+      "geoname_id": 2034935,
+      "level": "city"
+    },
+    {
+      "code": "210200",
+      "parent_code": "210000",
+      "name": "大连市",
+      "longitude": 122.25583,
+      "geoname_id": 1814068,
+      "level": "city"
+    },
+    {
+      "code": "210300",
+      "parent_code": "210000",
+      "name": "鞍山市",
+      "longitude": 122.8275,
+      "geoname_id": 2038630,
+      "level": "city"
+    },
+    {
+      "code": "210400",
+      "parent_code": "210000",
+      "name": "抚顺市",
+      "longitude": 124.74528,
+      "geoname_id": 2037353,
+      "level": "city"
+    },
+    {
+      "code": "210500",
+      "parent_code": "210000",
+      "name": "本溪市",
+      "longitude": 124.65667,
+      "geoname_id": 2038299,
+      "level": "city"
+    },
+    {
+      "code": "210600",
+      "parent_code": "210000",
+      "name": "丹东市",
+      "longitude": 124.38667,
+      "geoname_id": 2037885,
+      "level": "city"
+    },
+    {
+      "code": "210700",
+      "parent_code": "210000",
+      "name": "锦州市",
+      "longitude": 121.61528,
+      "geoname_id": 2036425,
+      "level": "city"
+    },
+    {
+      "code": "210800",
+      "parent_code": "210000",
+      "name": "营口市",
+      "longitude": 122.24762,
+      "geoname_id": 2033369,
+      "level": "city"
+    },
+    {
+      "code": "210900",
+      "parent_code": "210000",
+      "name": "阜新市",
+      "longitude": 122.01528,
+      "geoname_id": 2037337,
+      "level": "city"
+    },
+    {
+      "code": "211000",
+      "parent_code": "210000",
+      "name": "辽阳市",
+      "longitude": 123.33,
+      "geoname_id": 2036112,
+      "level": "city"
+    },
+    {
+      "code": "211100",
+      "parent_code": "210000",
+      "name": "盘锦市",
+      "longitude": 121.99361,
+      "geoname_id": 2035516,
+      "level": "city"
+    },
+    {
+      "code": "211200",
+      "parent_code": "210000",
+      "name": "铁岭市",
+      "longitude": 124.32361,
+      "geoname_id": 2034437,
+      "level": "city"
+    },
+    {
+      "code": "211300",
+      "parent_code": "210000",
+      "name": "朝阳市",
+      "longitude": 120.45,
+      "geoname_id": 2038101,
+      "level": "city"
+    },
+    {
+      "code": "211400",
+      "parent_code": "210000",
+      "name": "葫芦岛市",
+      "longitude": 120.21972,
+      "geoname_id": 2036430,
+      "level": "city"
+    },
+    {
+      "code": "220000",
+      "parent_code": "CN",
+      "name": "吉林省",
+      "longitude": 126.16667,
+      "geoname_id": 2036500,
+      "level": "province"
+    },
+    {
+      "code": "220100",
+      "parent_code": "220000",
+      "name": "长春市",
+      "longitude": 125.72,
+      "geoname_id": 2038176,
+      "level": "city"
+    },
+    {
+      "code": "220200",
+      "parent_code": "220000",
+      "name": "吉林市",
+      "longitude": 126.90556,
+      "geoname_id": 2036499,
+      "level": "city"
+    },
+    {
+      "code": "220300",
+      "parent_code": "220000",
+      "name": "四平市",
+      "longitude": 124.43911,
+      "geoname_id": 2034711,
+      "level": "city"
+    },
+    {
+      "code": "220400",
+      "parent_code": "220000",
+      "name": "辽源市",
+      "longitude": 125.3,
+      "geoname_id": 2036107,
+      "level": "city"
+    },
+    {
+      "code": "220500",
+      "parent_code": "220000",
+      "name": "通化市",
+      "longitude": 125.95,
+      "geoname_id": 2034413,
+      "level": "city"
+    },
+    {
+      "code": "220600",
+      "parent_code": "220000",
+      "name": "白山市",
+      "longitude": 127.2916,
+      "geoname_id": 2036646,
+      "level": "city"
+    },
+    {
+      "code": "220700",
+      "parent_code": "220000",
+      "name": "松原市",
+      "longitude": 124.3879,
+      "geoname_id": 6587798,
+      "level": "city"
+    },
+    {
+      "code": "220800",
+      "parent_code": "220000",
+      "name": "白城市",
+      "longitude": 122.92288,
+      "geoname_id": 2038567,
+      "level": "city"
+    },
+    {
+      "code": "222400",
+      "parent_code": "220000",
+      "name": "延边朝鲜族自治州",
+      "longitude": 129.12894,
+      "geoname_id": 2033525,
+      "level": "city"
+    },
+    {
+      "code": "230000",
+      "parent_code": "CN",
+      "name": "黑龙江省",
+      "longitude": 128,
+      "geoname_id": 2036965,
+      "level": "province"
+    },
+    {
+      "code": "230100",
+      "parent_code": "230000",
+      "name": "哈尔滨市",
+      "longitude": 127.96667,
+      "geoname_id": 2037012,
+      "level": "city"
+    },
+    {
+      "code": "230200",
+      "parent_code": "230000",
+      "name": "齐齐哈尔市",
+      "longitude": 124.55,
+      "geoname_id": 2035264,
+      "level": "city"
+    },
+    {
+      "code": "230300",
+      "parent_code": "230000",
+      "name": "鸡西市",
+      "longitude": 132.23333,
+      "geoname_id": 2036380,
+      "level": "city"
+    },
+    {
+      "code": "230400",
+      "parent_code": "230000",
+      "name": "鹤岗市",
+      "longitude": 130.80589,
+      "geoname_id": 2036985,
+      "level": "city"
+    },
+    {
+      "code": "230500",
+      "parent_code": "230000",
+      "name": "双鸭山市",
+      "longitude": 132.5,
+      "geoname_id": 2034785,
+      "level": "city"
+    },
+    {
+      "code": "230600",
+      "parent_code": "230000",
+      "name": "大庆市",
+      "longitude": 124.75,
+      "geoname_id": 2037847,
+      "level": "city"
+    },
+    {
+      "code": "230700",
+      "parent_code": "230000",
+      "name": "伊春市",
+      "longitude": 129.2,
+      "geoname_id": 2033412,
+      "level": "city"
+    },
+    {
+      "code": "230800",
+      "parent_code": "230000",
+      "name": "佳木斯市",
+      "longitude": 131.9,
+      "geoname_id": 2036580,
+      "level": "city"
+    },
+    {
+      "code": "230900",
+      "parent_code": "230000",
+      "name": "七台河市",
+      "longitude": 130.9,
+      "geoname_id": 2035260,
+      "level": "city"
+    },
+    {
+      "code": "231000",
+      "parent_code": "230000",
+      "name": "牡丹江市",
+      "longitude": 129.88333,
+      "geoname_id": 2035713,
+      "level": "city"
+    },
+    {
+      "code": "231100",
+      "parent_code": "230000",
+      "name": "黑河市",
+      "longitude": 127.50604,
+      "geoname_id": 2036971,
+      "level": "city"
+    },
+    {
+      "code": "231200",
+      "parent_code": "230000",
+      "name": "绥化市",
+      "longitude": 126.6,
+      "geoname_id": 2034654,
+      "level": "city"
+    },
+    {
+      "code": "232700",
+      "parent_code": "230000",
+      "name": "大兴安岭地区",
+      "longitude": 124.26987,
+      "geoname_id": 2037961,
+      "level": "city"
+    },
+    {
+      "code": "310000",
+      "parent_code": "CN",
+      "name": "上海市",
+      "longitude": 121.41667,
+      "geoname_id": 1796231,
+      "level": "province"
+    },
+    {
+      "code": "310100",
+      "parent_code": "310000",
+      "name": "上海市",
+      "longitude": 121.38988,
+      "geoname_id": 12324204,
+      "level": "city"
+    },
+    {
+      "code": "320000",
+      "parent_code": "CN",
+      "name": "江苏省",
+      "longitude": 119.83333,
+      "geoname_id": 1806260,
+      "level": "province"
+    },
+    {
+      "code": "320100",
+      "parent_code": "320000",
+      "name": "南京市",
+      "longitude": 118.87294,
+      "geoname_id": 1799960,
+      "level": "city"
+    },
+    {
+      "code": "320200",
+      "parent_code": "320000",
+      "name": "无锡市",
+      "longitude": 120.20944,
+      "geoname_id": 1790902,
+      "level": "city"
+    },
+    {
+      "code": "320300",
+      "parent_code": "320000",
+      "name": "徐州市",
+      "longitude": 117.54903,
+      "geoname_id": 1787823,
+      "level": "city"
+    },
+    {
+      "code": "320400",
+      "parent_code": "320000",
+      "name": "常州市",
+      "longitude": 119.66527,
+      "geoname_id": 1815454,
+      "level": "city"
+    },
+    {
+      "code": "320500",
+      "parent_code": "320000",
+      "name": "苏州市",
+      "longitude": 120.89493,
+      "geoname_id": 1881771,
+      "level": "city"
+    },
+    {
+      "code": "320600",
+      "parent_code": "320000",
+      "name": "南通市",
+      "longitude": 121.03677,
+      "geoname_id": 1799719,
+      "level": "city"
+    },
+    {
+      "code": "320700",
+      "parent_code": "320000",
+      "name": "连云港市",
+      "longitude": 119.11228,
+      "geoname_id": 1803847,
+      "level": "city"
+    },
+    {
+      "code": "320800",
+      "parent_code": "320000",
+      "name": "淮安市",
+      "longitude": 119.04559,
+      "geoname_id": 1807649,
+      "level": "city"
+    },
+    {
+      "code": "320900",
+      "parent_code": "320000",
+      "name": "盐城市",
+      "longitude": 120.21301,
+      "geoname_id": 1787743,
+      "level": "city"
+    },
+    {
+      "code": "321000",
+      "parent_code": "320000",
+      "name": "扬州市",
+      "longitude": 119.52527,
+      "geoname_id": 1787226,
+      "level": "city"
+    },
+    {
+      "code": "321100",
+      "parent_code": "320000",
+      "name": "镇江市",
+      "longitude": 119.51839,
+      "geoname_id": 1784640,
+      "level": "city"
+    },
+    {
+      "code": "321200",
+      "parent_code": "320000",
+      "name": "泰州市",
+      "longitude": 120.09398,
+      "geoname_id": 1793502,
+      "level": "city"
+    },
+    {
+      "code": "321300",
+      "parent_code": "320000",
+      "name": "宿迁市",
+      "longitude": 118.52941,
+      "geoname_id": 1793770,
+      "level": "city"
+    },
+    {
+      "code": "330000",
+      "parent_code": "CN",
+      "name": "浙江省",
+      "longitude": 120,
+      "geoname_id": 1784764,
+      "level": "province"
+    },
+    {
+      "code": "330100",
+      "parent_code": "330000",
+      "name": "杭州市",
+      "longitude": 119.6,
+      "geoname_id": 1808925,
+      "level": "city"
+    },
+    {
+      "code": "330200",
+      "parent_code": "330000",
+      "name": "宁波市",
+      "longitude": 121.55,
+      "geoname_id": 1799395,
+      "level": "city"
+    },
+    {
+      "code": "330300",
+      "parent_code": "330000",
+      "name": "温州市",
+      "longitude": 120.48519,
+      "geoname_id": 1791385,
+      "level": "city"
+    },
+    {
+      "code": "330400",
+      "parent_code": "330000",
+      "name": "嘉兴市",
+      "longitude": 120.75238,
+      "geoname_id": 1805952,
+      "level": "city"
+    },
+    {
+      "code": "330500",
+      "parent_code": "330000",
+      "name": "湖州市",
+      "longitude": 119.9,
+      "geoname_id": 1806534,
+      "level": "city"
+    },
+    {
+      "code": "330600",
+      "parent_code": "330000",
+      "name": "绍兴市",
+      "longitude": 120.6,
+      "geoname_id": 1795854,
+      "level": "city"
+    },
+    {
+      "code": "330700",
+      "parent_code": "330000",
+      "name": "金华市",
+      "longitude": 120,
+      "geoname_id": 1805525,
+      "level": "city"
+    },
+    {
+      "code": "330800",
+      "parent_code": "330000",
+      "name": "衢州市",
+      "longitude": 118.87185,
+      "geoname_id": 1797262,
+      "level": "city"
+    },
+    {
+      "code": "330900",
+      "parent_code": "330000",
+      "name": "舟山市",
+      "longitude": 122.21939,
+      "geoname_id": 1784107,
+      "level": "city"
+    },
+    {
+      "code": "331000",
+      "parent_code": "330000",
+      "name": "台州市",
+      "longitude": 121.31156,
+      "geoname_id": 1793504,
+      "level": "city"
+    },
+    {
+      "code": "331100",
+      "parent_code": "330000",
+      "name": "丽水市",
+      "longitude": 119.53333,
+      "geoname_id": 1803243,
+      "level": "city"
+    },
+    {
+      "code": "340000",
+      "parent_code": "CN",
+      "name": "安徽省",
+      "longitude": 117.16667,
+      "geoname_id": 1818058,
+      "level": "province"
+    },
+    {
+      "code": "340100",
+      "parent_code": "340000",
+      "name": "合肥市",
+      "longitude": 117.27805,
+      "geoname_id": 1808721,
+      "level": "city"
+    },
+    {
+      "code": "340200",
+      "parent_code": "340000",
+      "name": "芜湖市",
+      "longitude": 118.3547,
+      "geoname_id": 1791227,
+      "level": "city"
+    },
+    {
+      "code": "340300",
+      "parent_code": "340000",
+      "name": "蚌埠市",
+      "longitude": 117.43558,
+      "geoname_id": 1816439,
+      "level": "city"
+    },
+    {
+      "code": "340400",
+      "parent_code": "340000",
+      "name": "淮南市",
+      "longitude": 116.78813,
+      "geoname_id": 1807680,
+      "level": "city"
+    },
+    {
+      "code": "340500",
+      "parent_code": "340000",
+      "name": "马鞍山市",
+      "longitude": 118.62014,
+      "geoname_id": 1801618,
+      "level": "city"
+    },
+    {
+      "code": "340600",
+      "parent_code": "340000",
+      "name": "淮北市",
+      "longitude": 116.76328,
+      "geoname_id": 1807699,
+      "level": "city"
+    },
+    {
+      "code": "340700",
+      "parent_code": "340000",
+      "name": "铜陵市",
+      "longitude": 117.90207,
+      "geoname_id": 1792619,
+      "level": "city"
+    },
+    {
+      "code": "340800",
+      "parent_code": "340000",
+      "name": "安庆市",
+      "longitude": 116.55911,
+      "geoname_id": 1817991,
+      "level": "city"
+    },
+    {
+      "code": "341000",
+      "parent_code": "340000",
+      "name": "黄山市",
+      "longitude": 118.10553,
+      "geoname_id": 1806775,
+      "level": "city"
+    },
+    {
+      "code": "341100",
+      "parent_code": "340000",
+      "name": "滁州市",
+      "longitude": 118.08813,
+      "geoname_id": 1814761,
+      "level": "city"
+    },
+    {
+      "code": "341200",
+      "parent_code": "340000",
+      "name": "阜阳市",
+      "longitude": 115.70778,
+      "geoname_id": 1810843,
+      "level": "city"
+    },
+    {
+      "code": "341300",
+      "parent_code": "340000",
+      "name": "宿州市",
+      "longitude": 117.20569,
+      "geoname_id": 1793752,
+      "level": "city"
+    },
+    {
+      "code": "341500",
+      "parent_code": "340000",
+      "name": "六安市",
+      "longitude": 116.30285,
+      "geoname_id": 1802199,
+      "level": "city"
+    },
+    {
+      "code": "341600",
+      "parent_code": "340000",
+      "name": "亳州市",
+      "longitude": 115.7777,
+      "geoname_id": 11287254,
+      "level": "city"
+    },
+    {
+      "code": "341700",
+      "parent_code": "340000",
+      "name": "池州市",
+      "longitude": 117.41388,
+      "geoname_id": 6640435,
+      "level": "city"
+    },
+    {
+      "code": "341800",
+      "parent_code": "340000",
+      "name": "宣城市",
+      "longitude": 118.84193,
+      "geoname_id": 1788080,
+      "level": "city"
+    },
+    {
+      "code": "350000",
+      "parent_code": "CN",
+      "name": "福建省",
+      "longitude": 118,
+      "geoname_id": 1811017,
+      "level": "province"
+    },
+    {
+      "code": "350100",
+      "parent_code": "350000",
+      "name": "福州市",
+      "longitude": 119.11205,
+      "geoname_id": 1810815,
+      "level": "city"
+    },
+    {
+      "code": "350200",
+      "parent_code": "350000",
+      "name": "厦门市",
+      "longitude": 118.11566,
+      "geoname_id": 1790638,
+      "level": "city"
+    },
+    {
+      "code": "350300",
+      "parent_code": "350000",
+      "name": "莆田市",
+      "longitude": 118.87673,
+      "geoname_id": 1798445,
+      "level": "city"
+    },
+    {
+      "code": "350400",
+      "parent_code": "350000",
+      "name": "三明市",
+      "longitude": 117.33669,
+      "geoname_id": 1796662,
+      "level": "city"
+    },
+    {
+      "code": "350500",
+      "parent_code": "350000",
+      "name": "泉州市",
+      "longitude": 118.21291,
+      "geoname_id": 1797350,
+      "level": "city"
+    },
+    {
+      "code": "350600",
+      "parent_code": "350000",
+      "name": "漳州市",
+      "longitude": 117.40836,
+      "geoname_id": 1785017,
+      "level": "city"
+    },
+    {
+      "code": "350700",
+      "parent_code": "350000",
+      "name": "南平市",
+      "longitude": 118.19806,
+      "geoname_id": 1799838,
+      "level": "city"
+    },
+    {
+      "code": "350800",
+      "parent_code": "350000",
+      "name": "龙岩市",
+      "longitude": 116.6517,
+      "geoname_id": 1802274,
+      "level": "city"
+    },
+    {
+      "code": "350900",
+      "parent_code": "350000",
+      "name": "宁德市",
+      "longitude": 119.52267,
+      "geoname_id": 1799392,
+      "level": "city"
+    },
+    {
+      "code": "360000",
+      "parent_code": "CN",
+      "name": "江西省",
+      "longitude": 115.66667,
+      "geoname_id": 1806222,
+      "level": "province"
+    },
+    {
+      "code": "360100",
+      "parent_code": "360000",
+      "name": "南昌市",
+      "longitude": 115.9747,
+      "geoname_id": 1800160,
+      "level": "city"
+    },
+    {
+      "code": "360200",
+      "parent_code": "360000",
+      "name": "景德镇市",
+      "longitude": 117.24688,
+      "geoname_id": 1805679,
+      "level": "city"
+    },
+    {
+      "code": "360300",
+      "parent_code": "360000",
+      "name": "萍乡市",
+      "longitude": 113.87009,
+      "geoname_id": 1798652,
+      "level": "city"
+    },
+    {
+      "code": "360400",
+      "parent_code": "360000",
+      "name": "九江市",
+      "longitude": 115.36533,
+      "geoname_id": 1805178,
+      "level": "city"
+    },
+    {
+      "code": "360500",
+      "parent_code": "360000",
+      "name": "新余市",
+      "longitude": 114.92417,
+      "geoname_id": 9072903,
+      "level": "city"
+    },
+    {
+      "code": "360600",
+      "parent_code": "360000",
+      "name": "鹰潭市",
+      "longitude": 117.10565,
+      "geoname_id": 1786576,
+      "level": "city"
+    },
+    {
+      "code": "360700",
+      "parent_code": "360000",
+      "name": "赣州市",
+      "longitude": 115.34822,
+      "geoname_id": 1810636,
+      "level": "city"
+    },
+    {
+      "code": "360800",
+      "parent_code": "360000",
+      "name": "吉安市",
+      "longitude": 114.80283,
+      "geoname_id": 1806430,
+      "level": "city"
+    },
+    {
+      "code": "360900",
+      "parent_code": "360000",
+      "name": "宜春市",
+      "longitude": 114.9442,
+      "geoname_id": 1786745,
+      "level": "city"
+    },
+    {
+      "code": "361000",
+      "parent_code": "360000",
+      "name": "抚州市",
+      "longitude": 116.41518,
+      "geoname_id": 1810818,
+      "level": "city"
+    },
+    {
+      "code": "361100",
+      "parent_code": "360000",
+      "name": "上饶市",
+      "longitude": 117.47098,
+      "geoname_id": 1796129,
+      "level": "city"
+    },
+    {
+      "code": "370000",
+      "parent_code": "CN",
+      "name": "山东省",
+      "longitude": 118.25,
+      "geoname_id": 1796328,
+      "level": "province"
+    },
+    {
+      "code": "370100",
+      "parent_code": "370000",
+      "name": "济南市",
+      "longitude": 117.12318,
+      "geoname_id": 1805751,
+      "level": "city"
+    },
+    {
+      "code": "370200",
+      "parent_code": "370000",
+      "name": "青岛市",
+      "longitude": 120.26861,
+      "geoname_id": 1797926,
+      "level": "city"
+    },
+    {
+      "code": "370300",
+      "parent_code": "370000",
+      "name": "淄博市",
+      "longitude": 118.00167,
+      "geoname_id": 1783751,
+      "level": "city"
+    },
+    {
+      "code": "370400",
+      "parent_code": "370000",
+      "name": "枣庄市",
+      "longitude": 117.41083,
+      "geoname_id": 1785450,
+      "level": "city"
+    },
+    {
+      "code": "370500",
+      "parent_code": "370000",
+      "name": "东营市",
+      "longitude": 118.62139,
+      "geoname_id": 1812099,
+      "level": "city"
+    },
+    {
+      "code": "370600",
+      "parent_code": "370000",
+      "name": "烟台市",
+      "longitude": 120.8153,
+      "geoname_id": 1787083,
+      "level": "city"
+    },
+    {
+      "code": "370700",
+      "parent_code": "370000",
+      "name": "潍坊市",
+      "longitude": 119.0625,
+      "geoname_id": 1791680,
+      "level": "city"
+    },
+    {
+      "code": "370800",
+      "parent_code": "370000",
+      "name": "济宁市",
+      "longitude": 116.73389,
+      "geoname_id": 1805517,
+      "level": "city"
+    },
+    {
+      "code": "370900",
+      "parent_code": "370000",
+      "name": "泰安市",
+      "longitude": 117.00417,
+      "geoname_id": 1793722,
+      "level": "city"
+    },
+    {
+      "code": "371000",
+      "parent_code": "370000",
+      "name": "威海市",
+      "longitude": 122.06833,
+      "geoname_id": 1791671,
+      "level": "city"
+    },
+    {
+      "code": "371100",
+      "parent_code": "370000",
+      "name": "日照市",
+      "longitude": 119.17611,
+      "geoname_id": 1797131,
+      "level": "city"
+    },
+    {
+      "code": "371300",
+      "parent_code": "370000",
+      "name": "临沂市",
+      "longitude": 118.25333,
+      "geoname_id": 1803316,
+      "level": "city"
+    },
+    {
+      "code": "371400",
+      "parent_code": "370000",
+      "name": "德州市",
+      "longitude": 116.61552,
+      "geoname_id": 1812954,
+      "level": "city"
+    },
+    {
+      "code": "371500",
+      "parent_code": "370000",
+      "name": "聊城市",
+      "longitude": 115.86978,
+      "geoname_id": 1803833,
+      "level": "city"
+    },
+    {
+      "code": "371600",
+      "parent_code": "370000",
+      "name": "滨州市",
+      "longitude": 117.83639,
+      "geoname_id": 1816335,
+      "level": "city"
+    },
+    {
+      "code": "371700",
+      "parent_code": "370000",
+      "name": "菏泽市",
+      "longitude": 115.63278,
+      "geoname_id": 1808197,
+      "level": "city"
+    },
+    {
+      "code": "410000",
+      "parent_code": "CN",
+      "name": "河南省",
+      "longitude": 113.66667,
+      "geoname_id": 1808520,
+      "level": "province"
+    },
+    {
+      "code": "410100",
+      "parent_code": "410000",
+      "name": "郑州市",
+      "longitude": 113.55417,
+      "geoname_id": 1784657,
+      "level": "city"
+    },
+    {
+      "code": "410200",
+      "parent_code": "410000",
+      "name": "开封市",
+      "longitude": 114.58848,
+      "geoname_id": 1804878,
+      "level": "city"
+    },
+    {
+      "code": "410300",
+      "parent_code": "410000",
+      "name": "洛阳市",
+      "longitude": 112.03333,
+      "geoname_id": 1801785,
+      "level": "city"
+    },
+    {
+      "code": "410400",
+      "parent_code": "410000",
+      "name": "平顶山市",
+      "longitude": 113.00431,
+      "geoname_id": 1798826,
+      "level": "city"
+    },
+    {
+      "code": "410500",
+      "parent_code": "410000",
+      "name": "安阳市",
+      "longitude": 114.43333,
+      "geoname_id": 1817942,
+      "level": "city"
+    },
+    {
+      "code": "410600",
+      "parent_code": "410000",
+      "name": "鹤壁市",
+      "longitude": 114.35,
+      "geoname_id": 1808765,
+      "level": "city"
+    },
+    {
+      "code": "410700",
+      "parent_code": "410000",
+      "name": "新乡市",
+      "longitude": 114.15,
+      "geoname_id": 1788571,
+      "level": "city"
+    },
+    {
+      "code": "410800",
+      "parent_code": "410000",
+      "name": "焦作市",
+      "longitude": 113.13333,
+      "geoname_id": 1805986,
+      "level": "city"
+    },
+    {
+      "code": "410900",
+      "parent_code": "410000",
+      "name": "濮阳市",
+      "longitude": 115.33333,
+      "geoname_id": 1941243,
+      "level": "city"
+    },
+    {
+      "code": "411000",
+      "parent_code": "410000",
+      "name": "许昌市",
+      "longitude": 113.78517,
+      "geoname_id": 1788045,
+      "level": "city"
+    },
+    {
+      "code": "411100",
+      "parent_code": "410000",
+      "name": "漯河市",
+      "longitude": 113.92065,
+      "geoname_id": 1801930,
+      "level": "city"
+    },
+    {
+      "code": "411200",
+      "parent_code": "410000",
+      "name": "三门峡市",
+      "longitude": 111.10668,
+      "geoname_id": 1796667,
+      "level": "city"
+    },
+    {
+      "code": "411300",
+      "parent_code": "410000",
+      "name": "南阳地区",
+      "longitude": 112.40864,
+      "geoname_id": 1799614,
+      "level": "city"
+    },
+    {
+      "code": "411400",
+      "parent_code": "410000",
+      "name": "商丘市",
+      "longitude": 115.69722,
+      "geoname_id": 1796132,
+      "level": "city"
+    },
+    {
+      "code": "411500",
+      "parent_code": "410000",
+      "name": "信阳市",
+      "longitude": 114.95297,
+      "geoname_id": 1788527,
+      "level": "city"
+    },
+    {
+      "code": "411600",
+      "parent_code": "410000",
+      "name": "周口市",
+      "longitude": 114.91194,
+      "geoname_id": 1784128,
+      "level": "city"
+    },
+    {
+      "code": "411700",
+      "parent_code": "410000",
+      "name": "驻马店市",
+      "longitude": 114.28989,
+      "geoname_id": 1783872,
+      "level": "city"
+    },
+    {
+      "code": "420000",
+      "parent_code": "CN",
+      "name": "湖北省",
+      "longitude": 112.25,
+      "geoname_id": 1806949,
+      "level": "province"
+    },
+    {
+      "code": "420100",
+      "parent_code": "420000",
+      "name": "武汉市",
+      "longitude": 114.38946,
+      "geoname_id": 1791243,
+      "level": "city"
+    },
+    {
+      "code": "420200",
+      "parent_code": "420000",
+      "name": "黄石市",
+      "longitude": 115.11417,
+      "geoname_id": 1807225,
+      "level": "city"
+    },
+    {
+      "code": "420300",
+      "parent_code": "420000",
+      "name": "十堰市",
+      "longitude": 110.56081,
+      "geoname_id": 1794892,
+      "level": "city"
+    },
+    {
+      "code": "420500",
+      "parent_code": "420000",
+      "name": "宜昌市",
+      "longitude": 111.13375,
+      "geoname_id": 1786761,
+      "level": "city"
+    },
+    {
+      "code": "420600",
+      "parent_code": "420000",
+      "name": "襄樊市",
+      "longitude": 112.12132,
+      "geoname_id": 1790585,
+      "level": "city"
+    },
+    {
+      "code": "420700",
+      "parent_code": "420000",
+      "name": "鄂州市",
+      "longitude": 114.77979,
+      "geoname_id": 1811618,
+      "level": "city"
+    },
+    {
+      "code": "420800",
+      "parent_code": "420000",
+      "name": "荆门市",
+      "longitude": 112.6431,
+      "geoname_id": 1805610,
+      "level": "city"
+    },
+    {
+      "code": "420900",
+      "parent_code": "420000",
+      "name": "孝感市",
+      "longitude": 113.9344,
+      "geoname_id": 1790253,
+      "level": "city"
+    },
+    {
+      "code": "421000",
+      "parent_code": "420000",
+      "name": "荆州市",
+      "longitude": 112.50683,
+      "geoname_id": 1805539,
+      "level": "city"
+    },
+    {
+      "code": "421100",
+      "parent_code": "420000",
+      "name": "黄冈市",
+      "longitude": 115.38679,
+      "geoname_id": 1807500,
+      "level": "city"
+    },
+    {
+      "code": "421200",
+      "parent_code": "420000",
+      "name": "咸宁市",
+      "longitude": 114.26389,
+      "geoname_id": 1790395,
+      "level": "city"
+    },
+    {
+      "code": "421300",
+      "parent_code": "420000",
+      "name": "随州市",
+      "longitude": 113.46584,
+      "geoname_id": 1793878,
+      "level": "city"
+    },
+    {
+      "code": "422800",
+      "parent_code": "420000",
+      "name": "恩施土家族苗族自治州",
+      "longitude": 109.67555,
+      "geoname_id": 1811624,
+      "level": "city"
+    },
+    {
+      "code": "430000",
+      "parent_code": "CN",
+      "name": "湖南省",
+      "longitude": 111.75,
+      "geoname_id": 1806691,
+      "level": "province"
+    },
+    {
+      "code": "430100",
+      "parent_code": "430000",
+      "name": "长沙市",
+      "longitude": 113.22967,
+      "geoname_id": 1815551,
+      "level": "city"
+    },
+    {
+      "code": "430200",
+      "parent_code": "430000",
+      "name": "株洲",
+      "longitude": 113.08228,
+      "geoname_id": 1783761,
+      "level": "city"
+    },
+    {
+      "code": "430300",
+      "parent_code": "430000",
+      "name": "湘潭市",
+      "longitude": 112.62629,
+      "geoname_id": 1790484,
+      "level": "city"
+    },
+    {
+      "code": "430400",
+      "parent_code": "430000",
+      "name": "衡阳市",
+      "longitude": 112.62835,
+      "geoname_id": 1808369,
+      "level": "city"
+    },
+    {
+      "code": "430500",
+      "parent_code": "430000",
+      "name": "邵阳市",
+      "longitude": 110.95151,
+      "geoname_id": 1795852,
+      "level": "city"
+    },
+    {
+      "code": "430600",
+      "parent_code": "430000",
+      "name": "岳阳市",
+      "longitude": 113.302,
+      "geoname_id": 1785881,
+      "level": "city"
+    },
+    {
+      "code": "430700",
+      "parent_code": "430000",
+      "name": "常德市",
+      "longitude": 111.61236,
+      "geoname_id": 1815761,
+      "level": "city"
+    },
+    {
+      "code": "430800",
+      "parent_code": "430000",
+      "name": "张家界市",
+      "longitude": 110.53014,
+      "geoname_id": 1813170,
+      "level": "city"
+    },
+    {
+      "code": "430900",
+      "parent_code": "430000",
+      "name": "益阳市",
+      "longitude": 112.05669,
+      "geoname_id": 1786419,
+      "level": "city"
+    },
+    {
+      "code": "431000",
+      "parent_code": "430000",
+      "name": "郴州市",
+      "longitude": 113.05378,
+      "geoname_id": 1815056,
+      "level": "city"
+    },
+    {
+      "code": "431100",
+      "parent_code": "430000",
+      "name": "永州市",
+      "longitude": 111.6029,
+      "geoname_id": 11287265,
+      "level": "city"
+    },
+    {
+      "code": "431200",
+      "parent_code": "430000",
+      "name": "怀化市",
+      "longitude": 110.14355,
+      "geoname_id": 1807688,
+      "level": "city"
+    },
+    {
+      "code": "431300",
+      "parent_code": "430000",
+      "name": "娄底市",
+      "longitude": 111.67638,
+      "geoname_id": 1802234,
+      "level": "city"
+    },
+    {
+      "code": "433100",
+      "parent_code": "430000",
+      "name": "湘西土家族苗族自治州",
+      "longitude": 109.73329,
+      "geoname_id": 1790468,
+      "level": "city"
+    },
+    {
+      "code": "440000",
+      "parent_code": "CN",
+      "name": "广东省",
+      "longitude": 113.25,
+      "geoname_id": 1809935,
+      "level": "province"
+    },
+    {
+      "code": "440100",
+      "parent_code": "440000",
+      "name": "广州市",
+      "longitude": 113.51219,
+      "geoname_id": 1809857,
+      "level": "city"
+    },
+    {
+      "code": "440200",
+      "parent_code": "440000",
+      "name": "韶关市",
+      "longitude": 113.82848,
+      "geoname_id": 1795873,
+      "level": "city"
+    },
+    {
+      "code": "440300",
+      "parent_code": "440000",
+      "name": "深圳市",
+      "longitude": 113.9859,
+      "geoname_id": 1795563,
+      "level": "city"
+    },
+    {
+      "code": "440400",
+      "parent_code": "440000",
+      "name": "珠海市",
+      "longitude": 113.50219,
+      "geoname_id": 1783950,
+      "level": "city"
+    },
+    {
+      "code": "440500",
+      "parent_code": "440000",
+      "name": "汕头市",
+      "longitude": 116.53972,
+      "geoname_id": 1795932,
+      "level": "city"
+    },
+    {
+      "code": "440600",
+      "parent_code": "440000",
+      "name": "佛山市",
+      "longitude": 112.96302,
+      "geoname_id": 1811102,
+      "level": "city"
+    },
+    {
+      "code": "440700",
+      "parent_code": "440000",
+      "name": "江门市",
+      "longitude": 112.65997,
+      "geoname_id": 1806297,
+      "level": "city"
+    },
+    {
+      "code": "440800",
+      "parent_code": "440000",
+      "name": "湛江市",
+      "longitude": 109.97139,
+      "geoname_id": 1784987,
+      "level": "city"
+    },
+    {
+      "code": "440900",
+      "parent_code": "440000",
+      "name": "茂名市",
+      "longitude": 110.90714,
+      "geoname_id": 1801179,
+      "level": "city"
+    },
+    {
+      "code": "441200",
+      "parent_code": "440000",
+      "name": "肇庆市",
+      "longitude": 112.21776,
+      "geoname_id": 1784852,
+      "level": "city"
+    },
+    {
+      "code": "441300",
+      "parent_code": "440000",
+      "name": "惠州市",
+      "longitude": 114.46163,
+      "geoname_id": 1806783,
+      "level": "city"
+    },
+    {
+      "code": "441400",
+      "parent_code": "440000",
+      "name": "梅州市",
+      "longitude": 116.04037,
+      "geoname_id": 1800794,
+      "level": "city"
+    },
+    {
+      "code": "441500",
+      "parent_code": "440000",
+      "name": "汕尾市",
+      "longitude": 115.49539,
+      "geoname_id": 6571356,
+      "level": "city"
+    },
+    {
+      "code": "441600",
+      "parent_code": "440000",
+      "name": "河源市",
+      "longitude": 114.98585,
+      "geoname_id": 1808200,
+      "level": "city"
+    },
+    {
+      "code": "441700",
+      "parent_code": "440000",
+      "name": "阳江市",
+      "longitude": 111.69219,
+      "geoname_id": 1787530,
+      "level": "city"
+    },
+    {
+      "code": "441800",
+      "parent_code": "440000",
+      "name": "清远市",
+      "longitude": 112.87226,
+      "geoname_id": 1797626,
+      "level": "city"
+    },
+    {
+      "code": "441900",
+      "parent_code": "440000",
+      "name": "东莞市",
+      "longitude": 113.94818,
+      "geoname_id": 1812532,
+      "level": "city"
+    },
+    {
+      "code": "442000",
+      "parent_code": "440000",
+      "name": "中山市",
+      "longitude": 113.3755,
+      "geoname_id": 1784313,
+      "level": "city"
+    },
+    {
+      "code": "445100",
+      "parent_code": "440000",
+      "name": "潮州市",
+      "longitude": 116.76935,
+      "geoname_id": 1815394,
+      "level": "city"
+    },
+    {
+      "code": "445200",
+      "parent_code": "440000",
+      "name": "揭阳市",
+      "longitude": 116.12187,
+      "geoname_id": 1805830,
+      "level": "city"
+    },
+    {
+      "code": "445300",
+      "parent_code": "440000",
+      "name": "云浮市",
+      "longitude": 111.80472,
+      "geoname_id": 1785723,
+      "level": "city"
+    },
+    {
+      "code": "450000",
+      "parent_code": "CN",
+      "name": "广西壮族自治区",
+      "longitude": 109,
+      "geoname_id": 1809867,
+      "level": "province"
+    },
+    {
+      "code": "450100",
+      "parent_code": "450000",
+      "name": "南宁市",
+      "longitude": 108.31609,
+      "geoname_id": 1799866,
+      "level": "city"
+    },
+    {
+      "code": "450200",
+      "parent_code": "450000",
+      "name": "柳州市",
+      "longitude": 109.36667,
+      "geoname_id": 1802851,
+      "level": "city"
+    },
+    {
+      "code": "450300",
+      "parent_code": "450000",
+      "name": "桂林市",
+      "longitude": 110.51667,
+      "geoname_id": 1809492,
+      "level": "city"
+    },
+    {
+      "code": "450400",
+      "parent_code": "450000",
+      "name": "梧州市",
+      "longitude": 111.31147,
+      "geoname_id": 1790838,
+      "level": "city"
+    },
+    {
+      "code": "450500",
+      "parent_code": "450000",
+      "name": "北海市",
+      "longitude": 109.37297,
+      "geoname_id": 1816702,
+      "level": "city"
+    },
+    {
+      "code": "450600",
+      "parent_code": "450000",
+      "name": "防城港市",
+      "longitude": 107.95932,
+      "geoname_id": 7909223,
+      "level": "city"
+    },
+    {
+      "code": "450700",
+      "parent_code": "450000",
+      "name": "钦州市",
+      "longitude": 108.65925,
+      "geoname_id": 1797550,
+      "level": "city"
+    },
+    {
+      "code": "450800",
+      "parent_code": "450000",
+      "name": "贵港市",
+      "longitude": 109.98146,
+      "geoname_id": 7909203,
+      "level": "city"
+    },
+    {
+      "code": "450900",
+      "parent_code": "450000",
+      "name": "玉林市",
+      "longitude": 110.40043,
+      "geoname_id": 8537502,
+      "level": "city"
+    },
+    {
+      "code": "451000",
+      "parent_code": "450000",
+      "name": "百色地区",
+      "longitude": 106.51453,
+      "geoname_id": 1816268,
+      "level": "city"
+    },
+    {
+      "code": "451100",
+      "parent_code": "450000",
+      "name": "贺州市",
+      "longitude": 111.43516,
+      "geoname_id": 7909224,
+      "level": "city"
+    },
+    {
+      "code": "451200",
+      "parent_code": "450000",
+      "name": "河池市",
+      "longitude": 107.85,
+      "geoname_id": 1808757,
+      "level": "city"
+    },
+    {
+      "code": "451300",
+      "parent_code": "450000",
+      "name": "来宾市",
+      "longitude": 109.63333,
+      "geoname_id": 7909222,
+      "level": "city"
+    },
+    {
+      "code": "451400",
+      "parent_code": "450000",
+      "name": "崇左市",
+      "longitude": 107.36921,
+      "geoname_id": 7909220,
+      "level": "city"
+    },
+    {
+      "code": "460000",
+      "parent_code": "CN",
+      "name": "海南省",
+      "longitude": 109.75,
+      "geoname_id": 1809054,
+      "level": "province"
+    },
+    {
+      "code": "460100",
+      "parent_code": "460000",
+      "name": "海口市",
+      "longitude": 110.42673,
+      "geoname_id": 1809072,
+      "level": "city"
+    },
+    {
+      "code": "460200",
+      "parent_code": "460000",
+      "name": "三亚市",
+      "longitude": 109.40242,
+      "geoname_id": 1796539,
+      "level": "city"
+    },
+    {
+      "code": "460300",
+      "parent_code": "460000",
+      "name": "三沙市",
+      "longitude": 112.33435,
+      "geoname_id": 8402317,
+      "level": "city"
+    },
+    {
+      "code": "460400",
+      "parent_code": "460000",
+      "name": "儋州市",
+      "longitude": 109.40444,
+      "geoname_id": 1813805,
+      "level": "city"
+    },
+    {
+      "code": "500000",
+      "parent_code": "CN",
+      "name": "重庆市",
+      "longitude": 107.83333,
+      "geoname_id": 1814905,
+      "level": "province"
+    },
+    {
+      "code": "500100",
+      "parent_code": "500000",
+      "name": "重庆市",
+      "longitude": 107.40234,
+      "geoname_id": 8739734,
+      "level": "city"
+    },
+    {
+      "code": "510000",
+      "parent_code": "CN",
+      "name": "四川省",
+      "longitude": 102.66667,
+      "geoname_id": 1794299,
+      "level": "province"
+    },
+    {
+      "code": "510100",
+      "parent_code": "510000",
+      "name": "成都市",
+      "longitude": 103.87055,
+      "geoname_id": 1815285,
+      "level": "city"
+    },
+    {
+      "code": "510300",
+      "parent_code": "510000",
+      "name": "自贡市",
+      "longitude": 104.69835,
+      "geoname_id": 1783744,
+      "level": "city"
+    },
+    {
+      "code": "510400",
+      "parent_code": "510000",
+      "name": "攀枝花市",
+      "longitude": 101.57971,
+      "geoname_id": 1798997,
+      "level": "city"
+    },
+    {
+      "code": "510500",
+      "parent_code": "510000",
+      "name": "泸州市",
+      "longitude": 105.51898,
+      "geoname_id": 1801637,
+      "level": "city"
+    },
+    {
+      "code": "510600",
+      "parent_code": "510000",
+      "name": "德阳市",
+      "longitude": 104.47355,
+      "geoname_id": 6642946,
+      "level": "city"
+    },
+    {
+      "code": "510700",
+      "parent_code": "510000",
+      "name": "绵阳市",
+      "longitude": 104.75359,
+      "geoname_id": 1800626,
+      "level": "city"
+    },
+    {
+      "code": "510800",
+      "parent_code": "510000",
+      "name": "广元市",
+      "longitude": 105.8236,
+      "geoname_id": 6643372,
+      "level": "city"
+    },
+    {
+      "code": "510900",
+      "parent_code": "510000",
+      "name": "遂宁市",
+      "longitude": 105.46894,
+      "geoname_id": 6643374,
+      "level": "city"
+    },
+    {
+      "code": "511000",
+      "parent_code": "510000",
+      "name": "内江市",
+      "longitude": 104.86532,
+      "geoname_id": 1799490,
+      "level": "city"
+    },
+    {
+      "code": "511100",
+      "parent_code": "510000",
+      "name": "乐山市",
+      "longitude": 103.56336,
+      "geoname_id": 1804151,
+      "level": "city"
+    },
+    {
+      "code": "511300",
+      "parent_code": "510000",
+      "name": "南充市",
+      "longitude": 106.23174,
+      "geoname_id": 1800145,
+      "level": "city"
+    },
+    {
+      "code": "511400",
+      "parent_code": "510000",
+      "name": "眉山市",
+      "longitude": 104.04,
+      "geoname_id": 8537504,
+      "level": "city"
+    },
+    {
+      "code": "511500",
+      "parent_code": "510000",
+      "name": "宜宾市",
+      "longitude": 104.71866,
+      "geoname_id": 1786769,
+      "level": "city"
+    },
+    {
+      "code": "511600",
+      "parent_code": "510000",
+      "name": "广安市",
+      "longitude": 106.66667,
+      "geoname_id": 6643373,
+      "level": "city"
+    },
+    {
+      "code": "511700",
+      "parent_code": "510000",
+      "name": "达州市",
+      "longitude": 107.65,
+      "geoname_id": 1813324,
+      "level": "city"
+    },
+    {
+      "code": "511800",
+      "parent_code": "510000",
+      "name": "雅安市",
+      "longitude": 103,
+      "geoname_id": 1787815,
+      "level": "city"
+    },
+    {
+      "code": "511900",
+      "parent_code": "510000",
+      "name": "巴中市",
+      "longitude": 107.0623,
+      "geoname_id": 6643375,
+      "level": "city"
+    },
+    {
+      "code": "512000",
+      "parent_code": "510000",
+      "name": "资阳市",
+      "longitude": 105.17,
+      "geoname_id": 8594180,
+      "level": "city"
+    },
+    {
+      "code": "513200",
+      "parent_code": "510000",
+      "name": "阿坝藏族羌族自治州",
+      "longitude": 102.63664,
+      "geoname_id": 1818175,
+      "level": "city"
+    },
+    {
+      "code": "513300",
+      "parent_code": "510000",
+      "name": "甘孜藏族自治州",
+      "longitude": 100.40553,
+      "geoname_id": 1810269,
+      "level": "city"
+    },
+    {
+      "code": "513400",
+      "parent_code": "510000",
+      "name": "凉山彝族自治州",
+      "longitude": 102.1018,
+      "geoname_id": 1803984,
+      "level": "city"
+    },
+    {
+      "code": "520000",
+      "parent_code": "CN",
+      "name": "贵州省",
+      "longitude": 107,
+      "geoname_id": 1809445,
+      "level": "province"
+    },
+    {
+      "code": "520100",
+      "parent_code": "520000",
+      "name": "贵阳市",
+      "longitude": 106.71,
+      "geoname_id": 1809458,
+      "level": "city"
+    },
+    {
+      "code": "520200",
+      "parent_code": "520000",
+      "name": "六盘水市",
+      "longitude": 104.75182,
+      "geoname_id": 1801764,
+      "level": "city"
+    },
+    {
+      "code": "520300",
+      "parent_code": "520000",
+      "name": "遵义市",
+      "longitude": 107.07481,
+      "geoname_id": 1783620,
+      "level": "city"
+    },
+    {
+      "code": "520400",
+      "parent_code": "520000",
+      "name": "安顺市",
+      "longitude": 105.9091,
+      "geoname_id": 1817965,
+      "level": "city"
+    },
+    {
+      "code": "520500",
+      "parent_code": "520000",
+      "name": "毕节地区",
+      "longitude": 105.30087,
+      "geoname_id": 1816372,
+      "level": "city"
+    },
+    {
+      "code": "520600",
+      "parent_code": "520000",
+      "name": "铜仁地区",
+      "longitude": 109.19312,
+      "geoname_id": 1792591,
+      "level": "city"
+    },
+    {
+      "code": "522300",
+      "parent_code": "520000",
+      "name": "黔西南布依族苗族自治州",
+      "longitude": 105.3874,
+      "geoname_id": 1798226,
+      "level": "city"
+    },
+    {
+      "code": "522600",
+      "parent_code": "520000",
+      "name": "黔东南苗族侗族自治州",
+      "longitude": 108.59914,
+      "geoname_id": 1798360,
+      "level": "city"
+    },
+    {
+      "code": "522700",
+      "parent_code": "520000",
+      "name": "黔南布依族苗族自治州",
+      "longitude": 107.11856,
+      "geoname_id": 1798280,
+      "level": "city"
+    },
+    {
+      "code": "530000",
+      "parent_code": "CN",
+      "name": "云南省",
+      "longitude": 101.5,
+      "geoname_id": 1785694,
+      "level": "province"
+    },
+    {
+      "code": "530100",
+      "parent_code": "530000",
+      "name": "昆明市",
+      "longitude": 102.81853,
+      "geoname_id": 1804649,
+      "level": "city"
+    },
+    {
+      "code": "530300",
+      "parent_code": "530000",
+      "name": "曲靖市",
+      "longitude": 103.98613,
+      "geoname_id": 1797315,
+      "level": "city"
+    },
+    {
+      "code": "530400",
+      "parent_code": "530000",
+      "name": "玉溪市",
+      "longitude": 102.03299,
+      "geoname_id": 1785551,
+      "level": "city"
+    },
+    {
+      "code": "530500",
+      "parent_code": "530000",
+      "name": "保山市",
+      "longitude": 98.89645,
+      "geoname_id": 1281672,
+      "level": "city"
+    },
+    {
+      "code": "530600",
+      "parent_code": "530000",
+      "name": "昭通市",
+      "longitude": 104.03865,
+      "geoname_id": 1784839,
+      "level": "city"
+    },
+    {
+      "code": "530700",
+      "parent_code": "530000",
+      "name": "丽江市",
+      "longitude": 100.5086,
+      "geoname_id": 1803666,
+      "level": "city"
+    },
+    {
+      "code": "530800",
+      "parent_code": "530000",
+      "name": "思茅市",
+      "longitude": 100.98083,
+      "geoname_id": 1794208,
+      "level": "city"
+    },
+    {
+      "code": "530900",
+      "parent_code": "530000",
+      "name": "临沧市",
+      "longitude": 99.55124,
+      "geoname_id": 1803589,
+      "level": "city"
+    },
+    {
+      "code": "532300",
+      "parent_code": "530000",
+      "name": "楚雄彝族自治州",
+      "longitude": 101.70479,
+      "geoname_id": 1814758,
+      "level": "city"
+    },
+    {
+      "code": "532500",
+      "parent_code": "530000",
+      "name": "红河哈尼族彝族自治州",
+      "longitude": 102.97389,
+      "geoname_id": 1808130,
+      "level": "city"
+    },
+    {
+      "code": "532600",
+      "parent_code": "530000",
+      "name": "文山壮族苗族自治州",
+      "longitude": 104.7083,
+      "geoname_id": 1791424,
+      "level": "city"
+    },
+    {
+      "code": "532800",
+      "parent_code": "530000",
+      "name": "西双版纳傣族自治州",
+      "longitude": 101.00691,
+      "geoname_id": 1788323,
+      "level": "city"
+    },
+    {
+      "code": "532900",
+      "parent_code": "530000",
+      "name": "大理白族自治州",
+      "longitude": 100.13104,
+      "geoname_id": 1814065,
+      "level": "city"
+    },
+    {
+      "code": "533100",
+      "parent_code": "530000",
+      "name": "德宏傣族景颇族自治州",
+      "longitude": 98.03964,
+      "geoname_id": 1281381,
+      "level": "city"
+    },
+    {
+      "code": "533300",
+      "parent_code": "530000",
+      "name": "怒江傈僳族自治州",
+      "longitude": 99.14062,
+      "geoname_id": 1280418,
+      "level": "city"
+    },
+    {
+      "code": "533400",
+      "parent_code": "530000",
+      "name": "迪庆藏族自治州",
+      "longitude": 99.54841,
+      "geoname_id": 1281365,
+      "level": "city"
+    },
+    {
+      "code": "540000",
+      "parent_code": "CN",
+      "name": "西藏自治区",
+      "longitude": 88,
+      "geoname_id": 1279685,
+      "level": "province"
+    },
+    {
+      "code": "540100",
+      "parent_code": "540000",
+      "name": "拉萨市",
+      "longitude": 91.31109,
+      "geoname_id": 1280735,
+      "level": "city"
+    },
+    {
+      "code": "540200",
+      "parent_code": "540000",
+      "name": "日喀则地区",
+      "longitude": 86.8754,
+      "geoname_id": 1279714,
+      "level": "city"
+    },
+    {
+      "code": "540300",
+      "parent_code": "540000",
+      "name": "昌都地区",
+      "longitude": 97.22304,
+      "geoname_id": 1280280,
+      "level": "city"
+    },
+    {
+      "code": "540400",
+      "parent_code": "540000",
+      "name": "林芝地区",
+      "longitude": 94.42406,
+      "geoname_id": 1280390,
+      "level": "city"
+    },
+    {
+      "code": "540500",
+      "parent_code": "540000",
+      "name": "山南地区",
+      "longitude": 92.55684,
+      "geoname_id": 1280019,
+      "level": "city"
+    },
+    {
+      "code": "540600",
+      "parent_code": "540000",
+      "name": "那曲地区",
+      "longitude": 88.93146,
+      "geoname_id": 1280515,
+      "level": "city"
+    },
+    {
+      "code": "542500",
+      "parent_code": "540000",
+      "name": "阿里地区",
+      "longitude": 82.57507,
+      "geoname_id": 1280456,
+      "level": "city"
+    },
+    {
+      "code": "610000",
+      "parent_code": "CN",
+      "name": "陕西省",
+      "longitude": 109,
+      "geoname_id": 1796480,
+      "level": "province"
+    },
+    {
+      "code": "610100",
+      "parent_code": "610000",
+      "name": "西安市",
+      "longitude": 108.78583,
+      "geoname_id": 1790384,
+      "level": "city"
+    },
+    {
+      "code": "610200",
+      "parent_code": "610000",
+      "name": "铜川市",
+      "longitude": 109.04556,
+      "geoname_id": 1792691,
+      "level": "city"
+    },
+    {
+      "code": "610300",
+      "parent_code": "610000",
+      "name": "宝鸡市",
+      "longitude": 107.13635,
+      "geoname_id": 1816935,
+      "level": "city"
+    },
+    {
+      "code": "610400",
+      "parent_code": "610000",
+      "name": "咸阳市",
+      "longitude": 108.39361,
+      "geoname_id": 1790352,
+      "level": "city"
+    },
+    {
+      "code": "610500",
+      "parent_code": "610000",
+      "name": "渭南市",
+      "longitude": 109.735,
+      "geoname_id": 1791635,
+      "level": "city"
+    },
+    {
+      "code": "610600",
+      "parent_code": "610000",
+      "name": "延安市",
+      "longitude": 109.36083,
+      "geoname_id": 1787763,
+      "level": "city"
+    },
+    {
+      "code": "610700",
+      "parent_code": "610000",
+      "name": "汉中市",
+      "longitude": 107.04501,
+      "geoname_id": 1808856,
+      "level": "city"
+    },
+    {
+      "code": "610800",
+      "parent_code": "610000",
+      "name": "榆林市",
+      "longitude": 109.67194,
+      "geoname_id": 1785769,
+      "level": "city"
+    },
+    {
+      "code": "610900",
+      "parent_code": "610000",
+      "name": "安康市",
+      "longitude": 108.87799,
+      "geoname_id": 1818037,
+      "level": "city"
+    },
+    {
+      "code": "611000",
+      "parent_code": "610000",
+      "name": "商洛市",
+      "longitude": 109.89111,
+      "geoname_id": 1796165,
+      "level": "city"
+    },
+    {
+      "code": "620000",
+      "parent_code": "CN",
+      "name": "甘肃省",
+      "longitude": 102.75,
+      "geoname_id": 1810676,
+      "level": "province"
+    },
+    {
+      "code": "620100",
+      "parent_code": "620000",
+      "name": "兰州市",
+      "longitude": 103.73322,
+      "geoname_id": 1804429,
+      "level": "city"
+    },
+    {
+      "code": "620200",
+      "parent_code": "620000",
+      "name": "嘉峪关市",
+      "longitude": 98.23227,
+      "geoname_id": 1280956,
+      "level": "city"
+    },
+    {
+      "code": "620300",
+      "parent_code": "620000",
+      "name": "金昌市",
+      "longitude": 102.05839,
+      "geoname_id": 1805747,
+      "level": "city"
+    },
+    {
+      "code": "620400",
+      "parent_code": "620000",
+      "name": "白银市",
+      "longitude": 104.78495,
+      "geoname_id": 1817238,
+      "level": "city"
+    },
+    {
+      "code": "620500",
+      "parent_code": "620000",
+      "name": "天水市",
+      "longitude": 105.80699,
+      "geoname_id": 1792891,
+      "level": "city"
+    },
+    {
+      "code": "620600",
+      "parent_code": "620000",
+      "name": "武威市",
+      "longitude": 103.12409,
+      "geoname_id": 1790930,
+      "level": "city"
+    },
+    {
+      "code": "620700",
+      "parent_code": "620000",
+      "name": "张掖市",
+      "longitude": 99.92495,
+      "geoname_id": 1785035,
+      "level": "city"
+    },
+    {
+      "code": "620800",
+      "parent_code": "620000",
+      "name": "平凉市",
+      "longitude": 106.49565,
+      "geoname_id": 1798759,
+      "level": "city"
+    },
+    {
+      "code": "620900",
+      "parent_code": "620000",
+      "name": "酒泉市",
+      "longitude": 96.66479,
+      "geoname_id": 1280931,
+      "level": "city"
+    },
+    {
+      "code": "621000",
+      "parent_code": "620000",
+      "name": "庆阳市",
+      "longitude": 107.58113,
+      "geoname_id": 1797652,
+      "level": "city"
+    },
+    {
+      "code": "621100",
+      "parent_code": "620000",
+      "name": "定西市",
+      "longitude": 104.38623,
+      "geoname_id": 1812743,
+      "level": "city"
+    },
+    {
+      "code": "621200",
+      "parent_code": "620000",
+      "name": "陇南市",
+      "longitude": 105.34947,
+      "geoname_id": 1802494,
+      "level": "city"
+    },
+    {
+      "code": "622900",
+      "parent_code": "620000",
+      "name": "临夏回族自治州",
+      "longitude": 103.2408,
+      "geoname_id": 1803330,
+      "level": "city"
+    },
+    {
+      "code": "623000",
+      "parent_code": "620000",
+      "name": "甘南藏族自治州",
+      "longitude": 102.65909,
+      "geoname_id": 1810686,
+      "level": "city"
+    },
+    {
+      "code": "630000",
+      "parent_code": "CN",
+      "name": "青海省",
+      "longitude": 96,
+      "geoname_id": 1280239,
+      "level": "province"
+    },
+    {
+      "code": "630100",
+      "parent_code": "630000",
+      "name": "西宁市",
+      "longitude": 101.44081,
+      "geoname_id": 1788850,
+      "level": "city"
+    },
+    {
+      "code": "630200",
+      "parent_code": "630000",
+      "name": "海东地区",
+      "longitude": 102.37155,
+      "geoname_id": 1809101,
+      "level": "city"
+    },
+    {
+      "code": "632200",
+      "parent_code": "630000",
+      "name": "海北藏族自治州",
+      "longitude": 100.45656,
+      "geoname_id": 1809111,
+      "level": "city"
+    },
+    {
+      "code": "632300",
+      "parent_code": "630000",
+      "name": "黄南藏族自治州",
+      "longitude": 101.65149,
+      "geoname_id": 1807329,
+      "level": "city"
+    },
+    {
+      "code": "632500",
+      "parent_code": "630000",
+      "name": "海南藏族自治州",
+      "longitude": 100.34053,
+      "geoname_id": 1809051,
+      "level": "city"
+    },
+    {
+      "code": "632600",
+      "parent_code": "630000",
+      "name": "果洛藏族自治州",
+      "longitude": 99.55181,
+      "geoname_id": 1281178,
+      "level": "city"
+    },
+    {
+      "code": "632700",
+      "parent_code": "630000",
+      "name": "玉树藏族自治州",
+      "longitude": 94.19021,
+      "geoname_id": 1279540,
+      "level": "city"
+    },
+    {
+      "code": "632800",
+      "parent_code": "630000",
+      "name": "海西蒙古族藏族自治州",
+      "longitude": 95.45972,
+      "geoname_id": 1281075,
+      "level": "city"
+    },
+    {
+      "code": "640000",
+      "parent_code": "CN",
+      "name": "宁夏回族自治区",
+      "longitude": 106,
+      "geoname_id": 1799355,
+      "level": "province"
+    },
+    {
+      "code": "640100",
+      "parent_code": "640000",
+      "name": "银川市",
+      "longitude": 106.31667,
+      "geoname_id": 1786656,
+      "level": "city"
+    },
+    {
+      "code": "640200",
+      "parent_code": "640000",
+      "name": "石嘴山市",
+      "longitude": 106.51604,
+      "geoname_id": 1794805,
+      "level": "city"
+    },
+    {
+      "code": "640300",
+      "parent_code": "640000",
+      "name": "吴忠市",
+      "longitude": 106.51315,
+      "geoname_id": 1786512,
+      "level": "city"
+    },
+    {
+      "code": "640400",
+      "parent_code": "640000",
+      "name": "固原市",
+      "longitude": 106.23267,
+      "geoname_id": 1809151,
+      "level": "city"
+    },
+    {
+      "code": "640500",
+      "parent_code": "640000",
+      "name": "中卫市",
+      "longitude": 105.49659,
+      "geoname_id": 6643239,
+      "level": "city"
+    },
+    {
+      "code": "650000",
+      "parent_code": "CN",
+      "name": "新疆维吾尔自治区",
+      "longitude": 85.5,
+      "geoname_id": 1529047,
+      "level": "province"
+    },
+    {
+      "code": "650100",
+      "parent_code": "650000",
+      "name": "乌鲁木齐市",
+      "longitude": 87.58333,
+      "geoname_id": 1529101,
+      "level": "city"
+    },
+    {
+      "code": "650200",
+      "parent_code": "650000",
+      "name": "克拉玛依市",
+      "longitude": 85.19056,
+      "geoname_id": 1529400,
+      "level": "city"
+    },
+    {
+      "code": "650400",
+      "parent_code": "650000",
+      "name": "吐鲁番地区",
+      "longitude": 89.81997,
+      "geoname_id": 1529113,
+      "level": "city"
+    },
+    {
+      "code": "650500",
+      "parent_code": "650000",
+      "name": "哈密地区",
+      "longitude": 93.70747,
+      "geoname_id": 1529483,
+      "level": "city"
+    },
+    {
+      "code": "652300",
+      "parent_code": "650000",
+      "name": "昌吉回族自治州",
+      "longitude": 88.28429,
+      "geoname_id": 1529568,
+      "level": "city"
+    },
+    {
+      "code": "652700",
+      "parent_code": "650000",
+      "name": "博尔塔拉蒙古自治州",
+      "longitude": 82.04477,
+      "geoname_id": 1529581,
+      "level": "city"
+    },
+    {
+      "code": "652800",
+      "parent_code": "650000",
+      "name": "巴音郭楞蒙古自治州",
+      "longitude": 87.80201,
+      "geoname_id": 1529604,
+      "level": "city"
+    },
+    {
+      "code": "652900",
+      "parent_code": "650000",
+      "name": "阿克苏地区",
+      "longitude": 80.425,
+      "geoname_id": 1529658,
+      "level": "city"
+    },
+    {
+      "code": "653000",
+      "parent_code": "650000",
+      "name": "克孜勒苏柯尔克孜自治州",
+      "longitude": 75.14384,
+      "geoname_id": 1280828,
+      "level": "city"
+    },
+    {
+      "code": "653100",
+      "parent_code": "650000",
+      "name": "喀什地区",
+      "longitude": 77.10982,
+      "geoname_id": 1280848,
+      "level": "city"
+    },
+    {
+      "code": "653200",
+      "parent_code": "650000",
+      "name": "和田地区",
+      "longitude": 81.51233,
+      "geoname_id": 1281018,
+      "level": "city"
+    },
+    {
+      "code": "654000",
+      "parent_code": "650000",
+      "name": "伊犁哈萨克自治州",
+      "longitude": 82.02697,
+      "geoname_id": 1529434,
+      "level": "city"
+    },
+    {
+      "code": "654200",
+      "parent_code": "650000",
+      "name": "塔城地区",
+      "longitude": 84.59968,
+      "geoname_id": 1529166,
+      "level": "city"
+    },
+    {
+      "code": "654300",
+      "parent_code": "650000",
+      "name": "阿勒泰地区",
+      "longitude": 88.74035,
+      "geoname_id": 1529650,
+      "level": "city"
+    }
+  ]
+}

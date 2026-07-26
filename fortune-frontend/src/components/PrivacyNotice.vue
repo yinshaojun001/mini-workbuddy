@@ -1,0 +1,1 @@
+<template><section class="notice-band"><b>说明</b><p>命理解读属于传统文化娱乐内容，不构成医疗、法律、投资或人生决策建议。涉及健康、安全和财务风险时，请咨询具备资质的专业人士。</p><p>排盘计算由 <a href="https://openfate.ai" target="_blank" rel="noopener noreferrer">OpenFate.ai</a> 确定性引擎提供；城市经度数据来自 GeoNames，采用 CC BY 4.0。</p></section></template>

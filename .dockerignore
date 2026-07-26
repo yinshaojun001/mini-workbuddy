@@ -8,4 +8,10 @@ backend/.env
 backend/.venv
 frontend/node_modules
 frontend/dist
+fortune-frontend/node_modules
+fortune-frontend/dist
+fortune-frontend/test-results
+fortune-frontend/playwright-report
+fortune-engine/node_modules
+fortune-engine/dist
 workspace

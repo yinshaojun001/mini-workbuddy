@@ -11,6 +11,7 @@ const router = createRouter({
     { path: '/models', name: 'models', component: () => import('@/views/ModelsView.vue'), meta: { title: '模型' } },
     { path: '/skills', name: 'skills', component: () => import('@/views/SkillsView.vue'), meta: { title: '技能' } },
     { path: '/tools', name: 'tools', component: () => import('@/views/ToolsView.vue'), meta: { title: '工具' } },
+    { path: '/apps', name: 'apps', component: () => import('@/views/AppsView.vue'), meta: { title: '发布应用' } },
     { path: '/runs', name: 'runs', component: () => import('@/views/RunsView.vue'), meta: { title: '运行记录' } },
   ],
 })
@@ -18,4 +19,3 @@ const router = createRouter({
 router.afterEach((to) => { document.title = `${String(to.meta.title || '工作台')} · Mini-workbuddy` })
 
 export default router
-

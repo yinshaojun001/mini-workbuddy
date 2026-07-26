@@ -77,9 +77,53 @@ npm run build
 
 ## 生产部署
 
-生产环境通过 GitHub Actions 构建前端和后端镜像，再经 SSH 上传到服务器。服务器只负责加载镜像和运行 FastAPI 容器，前端静态文件由宿主机 Nginx 提供。
+生产环境通过 GitHub Actions 测试并构建管理前端、知命公开前端、FastAPI 镜像和确定性排盘镜像，再经 SSH 上传到服务器。服务器只加载镜像并切换版本化静态目录，不执行源码构建。排盘容器只加入专用 Docker network，不发布宿主机端口。
 
-部署文件位于 `deploy/`，工作流位于 `.github/workflows/deploy.yml`。服务器需要配置 `SERVER_HOST`、`SERVER_PORT`、`SERVER_USER` 和 `SERVER_SSH_KEY` 四个 GitHub Actions Secrets。运行数据必须持久化在 `/opt/mini-workbuddy/workspace`，不能放进 release 目录。
+部署文件位于 `deploy/`，工作流位于 `.github/workflows/deploy.yml`。GitHub 仓库需要配置以下 Actions Secrets：
+
+- `SERVER_HOST`
+- `SERVER_PORT`
+- `SERVER_USER`
+- `SERVER_SSH_KEY`
+
+服务器的 `/opt/mini-workbuddy/.env` 必须至少包含：
+
+```dotenv
+FRONTEND_ORIGIN=https://workbuddy.inshocking.com
+FORTUNE_ORIGIN=https://fortune.inshocking.com
+PUBLIC_SESSION_SECRET=<独立高熵随机值>
+PUBLIC_IP_HASH_SECRET=<另一个独立高熵随机值>
+COMMAND_TIMEOUT_SECONDS=30
+```
+
+两个 HMAC 密钥不得相同，也不能使用仓库中的开发默认值。运行数据持久化在 `/opt/mini-workbuddy/workspace`，不能放入 release 目录。部署脚本会依次检查排盘服务和 FastAPI；任一检查失败时恢复上一版容器镜像和 `current` 静态目录链接。
+
+首次启用公开站点时，将 `deploy/fortune-nginx.conf` 安装到服务器使用的 `conf.d` 目录，确认配置后 reload：
+
+```bash
+sudo cp deploy/fortune-nginx.conf /etc/nginx/conf.d/fortune.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+随后在阿里云 DNS 添加 `fortune.inshocking.com -> 47.93.35.251`，并在解析生效后签发证书：
+
+```bash
+sudo certbot --nginx -d fortune.inshocking.com --redirect
+sudo certbot renew --dry-run
+```
+
+上线后至少验证公开元数据、管理 API 隔离和两个容器的资源占用：
+
+```bash
+curl -I http://fortune.inshocking.com/
+curl -I https://fortune.inshocking.com/
+curl https://fortune.inshocking.com/api/public/apps/fortune
+curl -I https://fortune.inshocking.com/api/models
+docker stats --no-stream mini-workbuddy-backend fortune-bazi-engine
+free -h
+swapon --show
+```
 
 测试模型适配与 Agent 循环时使用假模型，不需要真实 API Key。真实对话和模型连通性测试需要在本地配置有效密钥。
 

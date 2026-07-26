@@ -39,7 +39,17 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            frontend/package-lock.json
+            fortune-frontend/package-lock.json
+            fortune-engine/package-lock.json
+
+      - name: Test and build fortune engine
+        working-directory: fortune-engine
+        run: |
+          npm ci
+          npm test
+          npm run build
 
       - name: Test and build frontend
         working-directory: frontend
@@ -48,6 +58,15 @@ jobs:
           npm test -- --run
           npm run build
 
+      - name: Test and build public fortune frontend
+        working-directory: fortune-frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm test -- --run
+          npm run build
+          npm run test:e2e
+
       - name: Build deployable backend image
         run: |
           docker build \
@@ -55,6 +74,11 @@ jobs:
             --tag "mini-workbuddy-backend:${GITHUB_SHA}" \
             .
           docker save "mini-workbuddy-backend:${GITHUB_SHA}" | gzip -1 > backend-image.tar.gz
+          docker build \
+            --file fortune-engine/Dockerfile \
+            --tag "fortune-bazi-engine:${GITHUB_SHA}" \
+            fortune-engine
+          docker save "fortune-bazi-engine:${GITHUB_SHA}" | gzip -1 > fortune-engine-image.tar.gz
 
       - name: Configure SSH
         env:
@@ -75,13 +99,19 @@ jobs:
         run: |
           SSH="ssh -i ~/.ssh/mini-workbuddy-deploy -p ${SERVER_PORT}"
           $SSH "${SERVER_USER}@${SERVER_HOST}" \
-            "mkdir -p /opt/mini-workbuddy/releases/${GITHUB_SHA}/frontend"
+            "mkdir -p /opt/mini-workbuddy/releases/${GITHUB_SHA}/frontend /opt/mini-workbuddy/releases/${GITHUB_SHA}/fortune-frontend"
           rsync -az --delete -e "$SSH" \
             frontend/dist/ \
             "${SERVER_USER}@${SERVER_HOST}:/opt/mini-workbuddy/releases/${GITHUB_SHA}/frontend/"
+          rsync -az --delete -e "$SSH" \
+            fortune-frontend/dist/ \
+            "${SERVER_USER}@${SERVER_HOST}:/opt/mini-workbuddy/releases/${GITHUB_SHA}/fortune-frontend/"
           rsync -az -e "$SSH" \
             backend-image.tar.gz \
+            fortune-engine-image.tar.gz \
             deploy/server-deploy.sh \
+            deploy/nginx.conf \
+            deploy/fortune-nginx.conf \
             "${SERVER_USER}@${SERVER_HOST}:/opt/mini-workbuddy/releases/${GITHUB_SHA}/"
 
       - name: Activate release

@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field, HttpUrl
 
 from app.config import get_settings
 from app.errors import AppError
+from app.runtime.model_adapter import raise_for_model_status
 from app.storage.collections import CollectionRepository
 
 router = APIRouter(prefix="/api/models", tags=["模型"])
@@ -95,11 +96,7 @@ async def test_model(model_id: str) -> dict:
                     "stream": False,
                 },
             )
-        if response.status_code == 401:
-            raise AppError("MODEL_AUTH_FAILED", "模型鉴权失败", 400)
-        if response.status_code == 429:
-            raise AppError("MODEL_RATE_LIMITED", "模型请求达到限流", 400)
-        response.raise_for_status()
+        raise_for_model_status(response)
         response.json()
     except AppError:
         raise
@@ -108,4 +105,3 @@ async def test_model(model_id: str) -> dict:
     except (httpx.HTTPError, ValueError) as exc:
         raise AppError("MODEL_CONNECTION_FAILED", "模型连接失败", 400) from exc
     return {"success": True, "message": "模型连接正常"}
-

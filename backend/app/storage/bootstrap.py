@@ -19,7 +19,7 @@ def bootstrap_workspace(root: Path) -> None:
             "id": "deepseek-default",
             "name": "DeepSeek 默认模型",
             "provider": "deepseek",
-            "model": "deepseek-chat",
+            "model": "deepseek-v4-flash",
             "base_url": "https://api.deepseek.com",
             "api_key": "",
             "enabled": True,
@@ -91,4 +91,3 @@ def bootstrap_workspace(root: Path) -> None:
             "# 主 Agent\n\n你是一个谨慎、清晰的本地工作助手。\n",
             encoding="utf-8",
         )
-

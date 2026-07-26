@@ -1,0 +1,32 @@
+{
+  "name": "fortune-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "generate:asset": "node scripts/generate-almanac-art.mjs"
+  },
+  "dependencies": {
+    "dompurify": "3.2.6",
+    "lucide-vue-next": "0.468.0",
+    "markdown-it": "14.1.0",
+    "vue": "3.5.17"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.54.1",
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "22.15.30",
+    "@vitejs/plugin-vue": "6.0.0",
+    "@vue/test-utils": "2.4.6",
+    "@vue/tsconfig": "0.7.0",
+    "jsdom": "26.1.0",
+    "typescript": "5.8.3",
+    "vite": "7.0.4",
+    "vitest": "3.2.4",
+    "vue-tsc": "3.0.1"
+  }
+}

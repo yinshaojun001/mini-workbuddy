@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bot, Boxes, Gauge, History, Wrench, X, Zap } from 'lucide-vue-next'
+import { AppWindow, Bot, Boxes, Gauge, History, Wrench, X, Zap } from 'lucide-vue-next'
 
 defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
@@ -10,6 +10,7 @@ const links = [
   { to: '/models', label: '模型', icon: Zap },
   { to: '/skills', label: '技能', icon: Boxes },
   { to: '/tools', label: '工具', icon: Wrench },
+  { to: '/apps', label: '发布应用', icon: AppWindow },
   { to: '/runs', label: '运行记录', icon: History },
 ]
 </script>
@@ -30,4 +31,3 @@ const links = [
     <div class="sidebar-foot"><span class="status-dot" />本地服务</div>
   </aside>
 </template>
-

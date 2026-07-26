@@ -25,6 +25,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.0.0",
     "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
     "jsdom": "^29.1.1",
     "typescript": "~5.8.0",

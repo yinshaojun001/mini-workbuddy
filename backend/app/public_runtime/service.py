@@ -4,6 +4,7 @@ import asyncio
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from time import monotonic
 from typing import Any, AsyncIterator, Callable
 from uuid import uuid4
 from zoneinfo import ZoneInfo
@@ -14,6 +15,8 @@ from app.errors import AppError
 from app.fortune.chart_client import ChartClient
 from app.fortune.cities import resolve_city
 from app.fortune.models import BirthInput
+from app.public_runtime.events import PublicRunEventRepository
+from app.public_runtime.metrics import PublicMetricsRepository, SAFE_ERROR_CODES
 from app.public_runtime.prompt import build_system_prompt
 from app.public_runtime.quota import QuotaRepository
 from app.public_runtime.repository import PublicSessionRepository
@@ -42,6 +45,25 @@ def repositories(settings: Settings) -> tuple[PublicSessionRepository, QuotaRepo
         PublicSessionRepository(settings.workspace_dir / "public_sessions"),
         QuotaRepository(settings.workspace_dir / "public_usage"),
     )
+
+
+def telemetry_repositories(
+    settings: Settings,
+) -> tuple[PublicRunEventRepository, PublicMetricsRepository]:
+    return (
+        PublicRunEventRepository(settings.workspace_dir / "public_sessions"),
+        PublicMetricsRepository(settings.workspace_dir / "public_metrics.json"),
+    )
+
+
+def safe_error_code(code: str) -> str:
+    if code in SAFE_ERROR_CODES:
+        return code
+    if code in {"MODEL_API_KEY_MISSING"}:
+        return "MODEL_AUTH_FAILED"
+    if code.startswith("MODEL_"):
+        return "MODEL_RESPONSE_INVALID"
+    return "ENGINE_FAILED"
 
 
 async def create_public_session(
@@ -83,6 +105,8 @@ async def create_public_session(
     except Exception:
         quota.release(owner_hash, ip_hash, reservation_id)
         raise
+    _, metrics = telemetry_repositories(settings)
+    metrics.session_created(app["id"])
     return session_payload(sessions, session, app)
 
 
@@ -102,10 +126,14 @@ def session_payload(sessions: PublicSessionRepository, session: dict, app: dict)
 def owned_session(settings: Settings, app: dict, session_id: str, owner_hash: str) -> tuple[PublicSessionRepository, dict]:
     sessions, quota = repositories(settings)
     session = sessions.get_owned(session_id, owner_hash)
-    if session["app_id"] != app["id"] or datetime.fromisoformat(session["expires_at"]) <= datetime.now(UTC):
+    expired = datetime.fromisoformat(session["expires_at"]) <= datetime.now(UTC)
+    if session["app_id"] != app["id"] or expired:
         if session.get("reservation_id") and not session.get("quota_committed"):
             quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
         sessions.delete(session_id)
+        if expired:
+            _, metrics = telemetry_repositories(settings)
+            metrics.session_deleted(session["app_id"], "ttl")
         raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404)
     return sessions, session
 
@@ -165,16 +193,44 @@ def public_agent_stream(
     sessions.update(session_id, {"updated_at": timestamp()})
     run_id = str(uuid4())
     engine = AgentEngine(adapter_factory(), ApprovalBroker(), max_rounds=2)
+    event_repository, metrics = telemetry_repositories(settings)
+    started_at = monotonic()
+    event_sequence = 0
+
+    def duration_ms() -> int:
+        return max(0, int((monotonic() - started_at) * 1000))
+
+    def record_event(event_type: str, error_code: str | None = None) -> None:
+        nonlocal event_sequence
+        event_sequence += 1
+        event_repository.append(
+            session_id,
+            run_id,
+            {
+                "sequence": event_sequence,
+                "timestamp": timestamp(),
+                "type": event_type,
+                "mode": mode,
+                "duration_ms": duration_ms(),
+                "model_id": model.get("model") or model.get("id"),
+                "error_code": error_code,
+            },
+        )
+
+    metrics.run_started(app["id"])
+    record_event("run.started")
+    record_event("agent.started")
+    record_event("model.started")
 
     async def stream() -> AsyncIterator[str]:
-        sequence = 0
+        public_sequence = 0
 
         def emit(event_type: str, data: dict) -> str:
-            nonlocal sequence
-            sequence += 1
+            nonlocal public_sequence
+            public_sequence += 1
             event = {
                 "run_id": run_id,
-                "sequence": sequence,
+                "sequence": public_sequence,
                 "timestamp": timestamp(),
                 "type": event_type,
                 "data": data,
@@ -184,6 +240,7 @@ def public_agent_stream(
         yield emit("run.started", {"session_id": session_id})
         assistant_content = ""
         completed = False
+        failure_stage = "model.failed"
         try:
             async for event in engine.run(model=model, messages=messages, tools=[], workspace=workspace):
                 if event["type"] == "message.delta":
@@ -192,6 +249,7 @@ def public_agent_stream(
                     completed = True
                     continue
                 if event["type"] == "run.failed":
+                    failure_stage = "run.failed"
                     raise AppError(
                         event["data"].get("code", "MODEL_UNAVAILABLE"),
                         event["data"].get("message", "解读模型暂时不可用"),
@@ -201,6 +259,9 @@ def public_agent_stream(
                     yield emit(event["type"], event["data"])
             if not completed or not assistant_content.strip():
                 raise AppError("MODEL_UNAVAILABLE", "解读模型未返回有效内容", 502)
+
+            record_event("model.completed")
+            record_event("agent.completed")
 
             now = timestamp()
             new_messages = []
@@ -218,6 +279,8 @@ def public_agent_stream(
             else:
                 updates["question_count"] = session["question_count"] + 1
             sessions.update(session_id, updates)
+            record_event("run.completed")
+            metrics.run_completed(app["id"], mode, duration_ms())
             yield emit("run.completed", {})
         except asyncio.CancelledError:
             sessions.update(session_id, {"status": "interrupted", "updated_at": timestamp()})
@@ -233,6 +296,9 @@ def public_agent_stream(
             if mode == "report":
                 _, quota = repositories(settings)
                 quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+            normalized_code = safe_error_code(error.code)
+            record_event(failure_stage, normalized_code)
+            metrics.run_failed(app["id"], mode, normalized_code)
             yield emit("run.failed", {"code": error.code, "message": error.message})
         except Exception:
             sessions.update(
@@ -242,6 +308,8 @@ def public_agent_stream(
             if mode == "report":
                 _, quota = repositories(settings)
                 quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+            record_event("agent.failed", "ENGINE_FAILED")
+            metrics.run_failed(app["id"], mode, "ENGINE_FAILED")
             yield emit("run.failed", {"code": "MODEL_UNAVAILABLE", "message": "解读模型暂时不可用"})
 
     return stream()

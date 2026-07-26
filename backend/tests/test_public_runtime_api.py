@@ -1,5 +1,12 @@
 import json
+from datetime import UTC, datetime, timedelta
 
+import pytest
+
+from app.errors import AppError
+from app.public_runtime.events import PublicRunEventRepository
+from app.public_runtime.metrics import PublicMetricsRepository
+from app.public_runtime.repository import PublicSessionRepository
 from app.storage.json_store import AtomicJsonStore
 
 ORIGIN = {"origin": "http://localhost:5174"}
@@ -29,6 +36,13 @@ class RecordingAdapter:
     async def complete(self, model, messages, tools):
         self.__class__.calls.append({"model": model, "messages": messages, "tools": tools})
         return {"content": "这是一份克制、具体的命理解读。", "tool_calls": []}
+
+
+class FailingAdapter:
+    error: Exception = RuntimeError("private adapter failure")
+
+    async def complete(self, model, messages, tools):
+        raise self.__class__.error
 
 
 def birth_payload():
@@ -136,6 +150,38 @@ def test_public_report_and_question_force_empty_tools(client, workspace, monkeyp
     assert restored["session"]["remaining_questions"] == 19
     assert [item["role"] for item in restored["messages"]] == ["assistant", "user", "assistant"]
 
+    telemetry = PublicRunEventRepository(workspace / "public_sessions").events(session_id)
+    assert len(telemetry["runs"]) == 2
+    assert all(
+        [event["type"] for event in run["events"]]
+        == [
+            "run.started",
+            "agent.started",
+            "model.started",
+            "model.completed",
+            "agent.completed",
+            "run.completed",
+        ]
+        for run in telemetry["runs"]
+    )
+    assert all(run["status"] == "completed" for run in telemetry["runs"])
+    assert all(
+        isinstance(event["duration_ms"], int) and event["duration_ms"] >= 0
+        for event in telemetry["events"]
+    )
+
+    metrics = PublicMetricsRepository(workspace / "public_metrics.json").read()["apps"]["fortune"]
+    assert metrics["sessions_created"] == 1
+    assert metrics["runs_started"] == 2
+    assert metrics["runs_completed"] == 2
+    assert metrics["reports_completed"] == 1
+    assert metrics["questions_completed"] == 1
+    assert metrics["reports_failed"] == metrics["questions_failed"] == 0
+
+    assert '"type": "agent.started"' not in report.text
+    assert '"type": "model.started"' not in report.text
+    assert '"model_id"' not in report.text
+
 
 def test_cookie_ownership_and_delete_are_isolated(client, workspace, monkeypatch):
     configure_fakes(monkeypatch, workspace)
@@ -143,6 +189,24 @@ def test_cookie_ownership_and_delete_are_isolated(client, workspace, monkeypatch
     client.cookies.clear()
     assert client.get(f"/api/public/apps/fortune/sessions/{session_id}").status_code == 404
     assert client.delete(f"/api/public/apps/fortune/sessions/{session_id}", headers=ORIGIN).status_code == 404
+
+
+def test_loading_an_expired_session_counts_an_opportunistic_ttl_cleanup(
+    client, workspace, monkeypatch
+):
+    configure_fakes(monkeypatch, workspace)
+    session_id = create_session(client)["session"]["id"]
+    PublicSessionRepository(workspace / "public_sessions").update(
+        session_id,
+        {"expires_at": (datetime.now(UTC) - timedelta(seconds=1)).isoformat()},
+    )
+
+    response = client.get(f"/api/public/apps/fortune/sessions/{session_id}")
+
+    assert response.status_code == 404
+    metrics = PublicMetricsRepository(workspace / "public_metrics.json").read()["apps"]["fortune"]
+    assert metrics["ttl_cleanups"] == 1
+    assert not (workspace / "public_sessions" / session_id).exists()
 
 
 def test_fourth_completed_report_exceeds_daily_quota(client, workspace, monkeypatch):
@@ -153,3 +217,56 @@ def test_fourth_completed_report_exceeds_daily_quota(client, workspace, monkeypa
     response = client.post("/api/public/apps/fortune/sessions", json=birth_payload(), headers=ORIGIN)
     assert response.status_code == 429
     assert response.json()["error"]["code"] == "DAILY_QUOTA_EXCEEDED"
+
+
+@pytest.mark.parametrize(
+    ("error", "safe_code", "terminal_type"),
+    [
+        (AppError("MODEL_TIMEOUT", "private timeout", 408), "MODEL_TIMEOUT", "model.failed"),
+        (
+            AppError("MODEL_AUTH_FAILED", "private auth", 400),
+            "MODEL_AUTH_FAILED",
+            "model.failed",
+        ),
+        (
+            AppError("MODEL_RATE_LIMITED", "private rate limit", 429),
+            "MODEL_RATE_LIMITED",
+            "model.failed",
+        ),
+        (
+            AppError("MODEL_BALANCE_INSUFFICIENT", "private balance", 400),
+            "MODEL_RESPONSE_INVALID",
+            "model.failed",
+        ),
+        (RuntimeError("private adapter failure"), "ENGINE_FAILED", "agent.failed"),
+    ],
+)
+def test_failed_public_runs_persist_only_safe_diagnostics(
+    client, workspace, monkeypatch, error, safe_code, terminal_type
+):
+    from app.public_runtime import router
+
+    enable_model(workspace)
+    monkeypatch.setattr(router, "chart_client_factory", FakeChartClient)
+    FailingAdapter.error = error
+    monkeypatch.setattr(router, "adapter_factory", FailingAdapter)
+    session_id = create_session(client)["session"]["id"]
+
+    response = client.post(f"/api/public/apps/fortune/sessions/{session_id}/report", headers=ORIGIN)
+
+    assert response.status_code == 200
+    telemetry = PublicRunEventRepository(workspace / "public_sessions").events(session_id)
+    run = telemetry["runs"][0]
+    assert [event["type"] for event in run["events"]] == [
+        "run.started",
+        "agent.started",
+        "model.started",
+        terminal_type,
+    ]
+    assert run["events"][-1]["error_code"] == safe_code
+    assert run["status"] == "failed"
+    metrics = PublicMetricsRepository(workspace / "public_metrics.json").read()["apps"]["fortune"]
+    assert metrics["runs_started"] == 1
+    assert metrics["runs_completed"] == 0
+    assert metrics["reports_failed"] == 1
+    assert metrics["errors"] == {safe_code: 1}

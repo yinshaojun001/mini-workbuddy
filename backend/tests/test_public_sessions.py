@@ -4,6 +4,7 @@ import pytest
 
 from app.errors import AppError
 from app.public_runtime.cleanup import cleanup_expired_sessions
+from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.quota import QuotaRepository
 from app.public_runtime.repository import PublicSessionRepository
 
@@ -40,9 +41,16 @@ def test_cleanup_removes_expired_data_and_interrupts_active_runs(tmp_path):
         session_record("running", datetime.now(UTC) + timedelta(hours=1), status="report_running"), {}, {}
     )
     quota = QuotaRepository(tmp_path / "usage")
-    assert cleanup_expired_sessions(repo, quota) == 1
+    metrics = PublicMetricsRepository(tmp_path / "public_metrics.json")
+    assert cleanup_expired_sessions(repo, quota, metrics) == 1
     assert not (tmp_path / "sessions" / "expired").exists()
     assert repo.get("running")["status"] == "interrupted"
+    assert metrics.read()["apps"]["fortune"]["ttl_cleanups"] == 1
+
+    assert cleanup_expired_sessions(repo, quota, metrics) == 0
+    snapshot = metrics.read()
+    assert snapshot["apps"]["fortune"]["ttl_cleanups"] == 1
+    assert snapshot["total"]["ttl_cleanups"] == 1
 
 
 def test_claim_run_is_atomic_and_rejects_a_second_active_run(tmp_path):

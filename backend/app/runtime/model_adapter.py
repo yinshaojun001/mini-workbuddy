@@ -6,6 +6,18 @@ import httpx
 from app.errors import AppError
 
 
+def raise_for_model_status(response: httpx.Response) -> None:
+    if response.status_code == 400:
+        raise AppError("MODEL_REQUEST_INVALID", "模型名称或请求参数不兼容", 400)
+    if response.status_code in {401, 403}:
+        raise AppError("MODEL_AUTH_FAILED", "模型鉴权失败", 400)
+    if response.status_code == 402:
+        raise AppError("MODEL_BALANCE_INSUFFICIENT", "模型账户余额不足", 400)
+    if response.status_code == 429:
+        raise AppError("MODEL_RATE_LIMITED", "模型请求达到限流", 400)
+    response.raise_for_status()
+
+
 class OpenAICompatibleAdapter:
     async def complete(
         self,
@@ -31,11 +43,7 @@ class OpenAICompatibleAdapter:
                     headers={"Authorization": f"Bearer {model['api_key']}"},
                     json=payload,
                 )
-            if response.status_code == 401:
-                raise AppError("MODEL_AUTH_FAILED", "模型鉴权失败", 400)
-            if response.status_code == 429:
-                raise AppError("MODEL_RATE_LIMITED", "模型请求达到限流", 400)
-            response.raise_for_status()
+            raise_for_model_status(response)
             message = response.json()["choices"][0]["message"]
         except AppError:
             raise
@@ -89,4 +97,3 @@ def tool_schema(tool_id: str) -> dict[str, Any]:
             "parameters": {"type": "object", "properties": body["properties"], "required": body["required"]},
         },
     }
-

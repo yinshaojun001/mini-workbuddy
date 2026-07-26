@@ -13,6 +13,9 @@ def test_bootstrap_creates_local_workspace(client, workspace: Path):
         assert (workspace / dirname).is_dir()
 
     tools = json.loads((workspace / "tools.json").read_text())
+    models = json.loads((workspace / "models.json").read_text())
+    deepseek = next(model for model in models if model["id"] == "deepseek-default")
+    assert deepseek["model"] == "deepseek-v4-flash"
     assert [tool["id"] for tool in tools] == [
         "read_file",
         "write_file",
@@ -26,4 +29,3 @@ def test_bootstrap_is_idempotent(client, workspace: Path):
 
     assert client.get("/api/health").status_code == 200
     assert models_path.read_text() == original
-

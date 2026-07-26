@@ -16,3 +16,117 @@ export interface PublishedApp {
   health: 'ready' | 'disabled' | 'agent_unavailable' | 'model_unavailable';
   public_url: string; created_at: string; updated_at: string;
 }
+
+export type PublicRunStatus = 'active' | 'running' | 'completed' | 'failed' | 'expired'
+export type PublicRunExecutionStatus = 'completed' | 'failed' | 'interrupted'
+export type PublicRunMode = 'report' | 'question'
+export type PublicRunErrorCode =
+  | 'MODEL_TIMEOUT'
+  | 'MODEL_AUTH_FAILED'
+  | 'MODEL_RATE_LIMITED'
+  | 'MODEL_RESPONSE_INVALID'
+  | 'ENGINE_FAILED'
+export type PublicRunEventType =
+  | 'run.started'
+  | 'agent.started'
+  | 'model.started'
+  | 'model.completed'
+  | 'agent.completed'
+  | 'run.completed'
+  | 'model.failed'
+  | 'agent.failed'
+  | 'run.failed'
+
+export interface PublicRunEvent {
+  run_id: string
+  sequence: number
+  timestamp: string
+  type: PublicRunEventType
+  mode: PublicRunMode
+  duration_ms: number
+  model_id: string | null
+  error_code: PublicRunErrorCode | null
+}
+
+export interface PublicRunGroup {
+  run_id: string
+  status: PublicRunExecutionStatus
+  events: PublicRunEvent[]
+}
+
+export interface PublicRunSummary {
+  session_id: string
+  app_id: string
+  app_name: string
+  status: PublicRunStatus
+  created_at: string
+  updated_at: string
+  expires_at: string
+  remaining_questions: number
+  message_count: number
+  run_count: number
+  last_run_status: PublicRunExecutionStatus | null
+}
+
+export interface PublicRunsListQuery {
+  app_id?: string
+  status?: PublicRunStatus
+  query?: string
+  limit?: number
+  cursor?: string
+}
+
+export interface PublicRunsListResponse {
+  items: PublicRunSummary[]
+  next_cursor: string | null
+  refreshed_at: string
+}
+
+export interface PublicRunBirth {
+  name: string | null
+  gender: string | null
+  birth_date: string | null
+  birth_time: string | null
+  birth_time_unknown: boolean | null
+  province_code: string | null
+  city_code: string | null
+  true_solar_time: boolean | null
+  focus_topics: string[]
+}
+
+export interface PublicRunChartSummary {
+  pillars: Partial<Record<'year' | 'month' | 'day' | 'hour', { gan_zhi: string }>>
+  day_master: { gan?: string }
+}
+
+export interface PublicRunDetail {
+  session: PublicRunSummary
+  birth: PublicRunBirth
+  chart: PublicRunChartSummary
+  messages: Message[]
+  runs: PublicRunGroup[]
+  events: PublicRunEvent[]
+  historical_events_unavailable: boolean
+}
+
+export interface PublicRunCounters {
+  sessions_created: number
+  reports_completed: number
+  reports_failed: number
+  questions_completed: number
+  questions_failed: number
+  runs_started: number
+  runs_completed: number
+  total_duration_ms: number
+  average_duration_ms: number
+  admin_deletions: number
+  visitor_deletions: number
+  ttl_cleanups: number
+  errors: Partial<Record<PublicRunErrorCode, number>>
+}
+
+export interface PublicRunStats {
+  version: number
+  apps: Record<string, PublicRunCounters>
+  total: PublicRunCounters
+}

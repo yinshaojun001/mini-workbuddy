@@ -10,6 +10,7 @@ from app.fortune.chart_client import ChartClient
 from app.fortune.cities import city_records
 from app.fortune.models import BirthInput
 from app.public_runtime.identity import client_ip, hmac_hash, visitor_identity
+from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.rate_limit import public_rate_limiter
 from app.public_runtime.service import (
     create_public_session,
@@ -150,3 +151,6 @@ def delete_session(slug: str, session_id: str, request: Request, response: Respo
         _, quota = repositories(settings)
         quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
     sessions.delete(session_id, owner_hash)
+    PublicMetricsRepository(settings.workspace_dir / "public_metrics.json").session_deleted(
+        app["id"], "visitor"
+    )

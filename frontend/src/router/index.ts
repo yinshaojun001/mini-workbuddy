@@ -12,6 +12,7 @@ const router = createRouter({
     { path: '/skills', name: 'skills', component: () => import('@/views/SkillsView.vue'), meta: { title: '技能' } },
     { path: '/tools', name: 'tools', component: () => import('@/views/ToolsView.vue'), meta: { title: '工具' } },
     { path: '/apps', name: 'apps', component: () => import('@/views/AppsView.vue'), meta: { title: '发布应用' } },
+    { path: '/public-runs', name: 'public-runs', component: () => import('@/views/PublicRunsView.vue'), meta: { title: '公开运行', wide: true } },
     { path: '/runs', name: 'runs', component: () => import('@/views/RunsView.vue'), meta: { title: '运行记录' } },
   ],
 })

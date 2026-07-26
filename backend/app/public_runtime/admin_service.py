@@ -221,10 +221,12 @@ class PublicRunsAdminService:
             return "completed"
         return "active"
 
-    @staticmethod
-    def _birth(birth: dict[str, Any], include_sensitive: bool) -> dict[str, Any]:
+    @classmethod
+    def _birth(cls, birth: dict[str, Any], include_sensitive: bool) -> dict[str, Any]:
         if include_sensitive:
-            return {field: birth.get(field) for field in _BIRTH_FIELDS}
+            result = {field: birth.get(field) for field in _BIRTH_FIELDS}
+            result["birth_time"] = cls._normalized_birth_time(birth.get("birth_time"))
+            return result
         name = str(birth.get("name") or "")
         return {
             "name": (name[:1] + "*" * max(1, len(name) - 1)) if name else "***",
@@ -248,8 +250,12 @@ class PublicRunsAdminService:
                 safe_pillars[key] = {"gan_zhi": pillar["ganZhi"]}
         day_master = chart.get("day_master")
         safe_day_master = {}
-        if isinstance(day_master, dict) and isinstance(day_master.get("gan"), str):
-            safe_day_master["gan"] = day_master["gan"]
+        if isinstance(day_master, dict):
+            gan = day_master.get("gan")
+            if not isinstance(gan, str):
+                gan = day_master.get("char")
+            if isinstance(gan, str):
+                safe_day_master["gan"] = gan
         return {"pillars": safe_pillars, "day_master": safe_day_master}
 
     @staticmethod
@@ -262,14 +268,18 @@ class PublicRunsAdminService:
             return []
         replacements = {}
         if not include_sensitive:
+            stored_birth_time = str(birth.get("birth_time") or "")
             replacements = {
                 str(birth.get("name") or ""): "***",
                 str(birth.get("gender") or ""): "***",
                 str(birth.get("birth_date") or ""): "****-**-**",
-                str(birth.get("birth_time") or ""): "**:**",
+                stored_birth_time: "**:**",
                 str(birth.get("province_code") or ""): "******",
                 str(birth.get("city_code") or ""): "******",
             }
+            normalized_birth_time = PublicRunsAdminService._normalized_birth_time(stored_birth_time)
+            if normalized_birth_time:
+                replacements[normalized_birth_time] = "**:**"
             for topic in birth.get("focus_topics") or []:
                 if isinstance(topic, str):
                     replacements[topic] = "***"
@@ -290,6 +300,18 @@ class PublicRunsAdminService:
                 }
             )
         return result
+
+    @staticmethod
+    def _normalized_birth_time(value: Any) -> str | None:
+        if value is None or value == "":
+            return None
+        try:
+            return datetime.strptime(str(value), "%H:%M:%S").strftime("%H:%M")
+        except ValueError:
+            try:
+                return datetime.strptime(str(value), "%H:%M").strftime("%H:%M")
+            except ValueError:
+                return None
 
     @classmethod
     def _safe_telemetry(cls, telemetry: dict[str, Any]) -> dict[str, Any]:

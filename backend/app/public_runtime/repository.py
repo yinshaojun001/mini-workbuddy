@@ -89,6 +89,31 @@ class PublicSessionRepository:
             shutil.rmtree(self.root / session_id)
             return session
 
+    def snapshot(self, session_id: str) -> dict[str, Any]:
+        with self._lock:
+            session = self.get(session_id)
+            directory = self.root / session_id
+            try:
+                return {
+                    "session": session,
+                    "birth": json.loads((directory / "input.json").read_text(encoding="utf-8")),
+                    "chart": json.loads((directory / "chart.json").read_text(encoding="utf-8")),
+                    "messages": json.loads((directory / "messages.json").read_text(encoding="utf-8")),
+                }
+            except (OSError, json.JSONDecodeError) as exc:
+                raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404) from exc
+
+    def delete_for_admin(self, session_id: str) -> dict[str, Any]:
+        with self._lock:
+            session = self.get(session_id)
+            if session.get("status") in {"report_running", "question_running"}:
+                raise AppError("SESSION_RUNNING", "当前运行结束后才能删除会话", 409)
+            try:
+                shutil.rmtree(self.root / session_id)
+            except FileNotFoundError as exc:
+                raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404) from exc
+            return session
+
     def all(self) -> list[dict]:
         if not self.root.exists():
             return []

@@ -53,6 +53,26 @@ def test_cleanup_removes_expired_data_and_interrupts_active_runs(tmp_path):
     assert snapshot["total"]["ttl_cleanups"] == 1
 
 
+def test_cleanup_continues_when_another_deleter_wins_the_race(tmp_path):
+    class ConcurrentDeleteRepository(PublicSessionRepository):
+        def all(self):
+            sessions = super().all()
+            super().delete("race-lost")
+            return sessions
+
+    repo = ConcurrentDeleteRepository(tmp_path / "sessions")
+    expired_at = datetime.now(UTC) - timedelta(seconds=1)
+    repo.create(session_record("race-lost", expired_at), {}, {})
+    repo.create(session_record("ttl-winner", expired_at), {}, {})
+    quota = QuotaRepository(tmp_path / "usage")
+    metrics = PublicMetricsRepository(tmp_path / "public_metrics.json")
+
+    assert cleanup_expired_sessions(repo, quota, metrics) == 1
+    assert not (tmp_path / "sessions" / "race-lost").exists()
+    assert not (tmp_path / "sessions" / "ttl-winner").exists()
+    assert metrics.read()["apps"]["fortune"]["ttl_cleanups"] == 1
+
+
 def test_claim_run_is_atomic_and_rejects_a_second_active_run(tmp_path):
     repo = PublicSessionRepository(tmp_path / "sessions")
     repo.create(session_record("one", datetime.now(UTC) + timedelta(hours=1)), {}, {})

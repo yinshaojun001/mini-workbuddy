@@ -2,6 +2,7 @@ import asyncio
 from contextlib import suppress
 from datetime import UTC, datetime
 
+from app.errors import AppError
 from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.quota import QuotaRepository
 from app.public_runtime.repository import PublicSessionRepository
@@ -16,11 +17,21 @@ def cleanup_expired_sessions(
     now = datetime.now(UTC)
     for session in sessions.all():
         if session["status"] in {"report_running", "question_running"}:
-            sessions.update(session["id"], {"status": "interrupted"})
+            try:
+                sessions.update(session["id"], {"status": "interrupted"})
+            except AppError as error:
+                if error.code == "PUBLIC_SESSION_NOT_FOUND":
+                    continue
+                raise
         if datetime.fromisoformat(session["expires_at"]) <= now:
             if session.get("reservation_id") and not session.get("quota_committed"):
                 quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
-            sessions.delete(session["id"])
+            try:
+                sessions.delete(session["id"])
+            except AppError as error:
+                if error.code == "PUBLIC_SESSION_NOT_FOUND":
+                    continue
+                raise
             metrics.session_deleted(session["app_id"], "ttl")
             removed += 1
     return removed

@@ -14,6 +14,7 @@ from app.models.router import router as models_router
 from app.runs.router import router as runs_router
 from app.runtime.router import router as runtime_router
 from app.public_runtime.cleanup import cleanup_expired_sessions, cleanup_loop, stop_cleanup_task
+from app.public_runtime.admin_router import router as public_runs_admin_router
 from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.repository import PublicSessionRepository
 from app.public_runtime.quota import QuotaRepository
@@ -82,6 +83,7 @@ def create_app() -> FastAPI:
     app.include_router(runs_router)
     app.include_router(runtime_router)
     app.include_router(apps_router)
+    app.include_router(public_runs_admin_router)
     app.include_router(public_runtime_router)
 
     @app.get("/api/health")

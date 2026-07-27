@@ -63,7 +63,7 @@ export function calculateChart(request: ChartRequest) {
     attribution: {
       name: "OpenFate.ai",
       url: "https://openfate.ai",
-      engine: "@openfate/bazi-engine@1.1.1",
+      engine: "@openfate/bazi-engine@1.1.2",
       true_solar_time_engine: "@openfate/true-solar-time@4.0.2",
     },
   };

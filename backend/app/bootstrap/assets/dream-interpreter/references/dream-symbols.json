@@ -1,0 +1,560 @@
+{
+  "schema_version": 1,
+  "version": "1.0.1",
+  "source": {
+    "id": "zhougong-public-domain-v1",
+    "upstream_commit": "1aa675597ee1405c9dea142bda0a3a9ed460ac99"
+  },
+  "symbols": [
+    {
+      "id": "sun",
+      "label": "太阳",
+      "aliases": [
+        "太阳",
+        "太陽",
+        "日头",
+        "日頭",
+        "太阳公公",
+        "太陽公公"
+      ],
+      "category": "天地日月星辰",
+      "quote": "日光入屋官位至",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "moon",
+      "label": "月亮",
+      "aliases": [
+        "月亮",
+        "月球",
+        "明月"
+      ],
+      "category": "天地日月星辰",
+      "quote": "拜星月燒香大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "rain",
+      "label": "下雨",
+      "aliases": [
+        "下雨",
+        "大雨",
+        "雨水",
+        "暴雨",
+        "淋雨"
+      ],
+      "category": "天地日月星辰",
+      "quote": "行路逢雨有酒食",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "mountain",
+      "label": "山",
+      "aliases": [
+        "山",
+        "高山",
+        "山峰",
+        "大山"
+      ],
+      "category": "地理山石樹木",
+      "quote": "遊看高山春夏吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "tree",
+      "label": "树",
+      "aliases": [
+        "树",
+        "樹",
+        "树木",
+        "樹木",
+        "大树",
+        "大樹"
+      ],
+      "category": "地理山石樹木",
+      "quote": "種植樹木大吉昌",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "teeth",
+      "label": "牙齿",
+      "aliases": [
+        "牙齿",
+        "牙齒",
+        "牙",
+        "掉牙",
+        "牙掉了"
+      ],
+      "category": "身體面目齒髮",
+      "quote": "齒自落者父母凶",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "hair",
+      "label": "头发",
+      "aliases": [
+        "头发",
+        "頭髮",
+        "长发",
+        "長髮",
+        "白发",
+        "白髮"
+      ],
+      "category": "身體面目齒髮",
+      "quote": "頭禿髮落皆凶事",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "clothes",
+      "label": "衣服",
+      "aliases": [
+        "衣服",
+        "衣裳",
+        "衣物",
+        "外衣"
+      ],
+      "category": "冠帶衣服鞋襪",
+      "quote": "洗染衣服皆大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "knife",
+      "label": "刀",
+      "aliases": [
+        "刀",
+        "刀子",
+        "菜刀",
+        "刀剑",
+        "刀劍"
+      ],
+      "category": "刀劍旌節鐘鼓",
+      "quote": "拔刀出行主大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "house",
+      "label": "房屋",
+      "aliases": [
+        "房屋",
+        "房子",
+        "屋子",
+        "房间",
+        "房間",
+        "老宅",
+        "旧屋",
+        "舊屋"
+      ],
+      "category": "宮室屋宇倉庫",
+      "quote": "屋宅更新主大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "door",
+      "label": "门",
+      "aliases": [
+        "门",
+        "門",
+        "门口",
+        "門口",
+        "大门",
+        "大門"
+      ],
+      "category": "門戶井灶廚廁",
+      "quote": "門戶忽開主大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "mirror",
+      "label": "镜子",
+      "aliases": [
+        "镜子",
+        "鏡子",
+        "镜",
+        "鏡",
+        "明镜",
+        "明鏡"
+      ],
+      "category": "鏡環釵釧梳篦",
+      "quote": "明鏡者吉暗者凶",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "boat",
+      "label": "船",
+      "aliases": [
+        "船",
+        "船只",
+        "船隻",
+        "小船",
+        "舟"
+      ],
+      "category": "船車遊行物件",
+      "quote": "乘船風帆大吉利",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "car",
+      "label": "汽车",
+      "aliases": [
+        "汽车",
+        "汽車",
+        "轿车",
+        "轎車"
+      ],
+      "category": "船車遊行物件",
+      "quote": "車行主百事順和",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "road",
+      "label": "道路",
+      "aliases": [
+        "道路",
+        "路上",
+        "路边",
+        "路邊",
+        "小路",
+        "公路",
+        "大路",
+        "岔路"
+      ],
+      "category": "道路橋梁市集",
+      "quote": "見四路通名利遂",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "bridge",
+      "label": "桥",
+      "aliases": [
+        "桥",
+        "橋",
+        "桥梁",
+        "橋梁",
+        "过桥",
+        "過橋"
+      ],
+      "category": "道路橋梁市集",
+      "quote": "修橋樑者萬事和",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "coffin",
+      "label": "棺材",
+      "aliases": [
+        "棺材",
+        "棺木",
+        "棺",
+        "棺椁",
+        "棺槨"
+      ],
+      "category": "塚墓棺槨迎送",
+      "quote": "新塚棺槨主憂除",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "death",
+      "label": "死亡",
+      "aliases": [
+        "死亡",
+        "死人",
+        "死去",
+        "已经离世",
+        "已經離世",
+        "离世的亲人",
+        "離世的親人",
+        "已故亲人",
+        "已故親人"
+      ],
+      "category": "哀樂病死歌唱",
+      "quote": "見人死自死者吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "ghost",
+      "label": "鬼",
+      "aliases": [
+        "鬼",
+        "鬼魂",
+        "幽灵",
+        "幽靈",
+        "鬼怪"
+      ],
+      "category": "佛道僧尼鬼神",
+      "quote": "與鬼鬥者主延壽",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "fight",
+      "label": "打斗",
+      "aliases": [
+        "打斗",
+        "打鬥",
+        "打架",
+        "争斗",
+        "爭鬥",
+        "搏斗",
+        "搏鬥"
+      ],
+      "category": "被害鬥傷打罵",
+      "quote": "家中人鬥主分散",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "prison",
+      "label": "监狱",
+      "aliases": [
+        "监狱",
+        "監獄",
+        "牢狱",
+        "牢獄",
+        "牢房",
+        "坐牢"
+      ],
+      "category": "捕禁刑罰獄具",
+      "quote": "坐獄中必有恩赦",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "water",
+      "label": "水",
+      "aliases": [
+        "水",
+        "河水",
+        "海水",
+        "积水",
+        "積水",
+        "洪水",
+        "清水"
+      ],
+      "category": "水火盜賊燈燭",
+      "quote": "大水澄清大吉利",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "fire",
+      "label": "火",
+      "aliases": [
+        "火",
+        "火焰",
+        "起火",
+        "大火",
+        "火灾",
+        "火災",
+        "着火",
+        "著火"
+      ],
+      "category": "水火盜賊燈燭",
+      "quote": "火燒自屋主興旺",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "bath",
+      "label": "洗澡",
+      "aliases": [
+        "洗澡",
+        "沐浴",
+        "冲澡",
+        "沖澡",
+        "泡澡"
+      ],
+      "category": "垢污沐浴凌辱",
+      "quote": "沐浴塵土疾病安",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "dragon",
+      "label": "龙",
+      "aliases": [
+        "龙",
+        "龍",
+        "巨龙",
+        "巨龍",
+        "神龙",
+        "神龍"
+      ],
+      "category": "龍蛇禽獸等類",
+      "quote": "龍飛有官位大貴",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "snake",
+      "label": "蛇",
+      "aliases": [
+        "蛇",
+        "蛇类",
+        "蛇類",
+        "毒蛇",
+        "大蛇"
+      ],
+      "category": "龍蛇禽獸等類",
+      "quote": "蛇行水內主榮遷",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "tiger",
+      "label": "老虎",
+      "aliases": [
+        "老虎",
+        "虎",
+        "猛虎",
+        "白虎"
+      ],
+      "category": "龍蛇禽獸等類",
+      "quote": "猛虎大吼主得官",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "dog",
+      "label": "狗",
+      "aliases": [
+        "狗",
+        "犬",
+        "小狗",
+        "恶狗",
+        "惡狗"
+      ],
+      "category": "牛馬豬羊六畜",
+      "quote": "犬吠主人失財凶",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "cat",
+      "label": "猫",
+      "aliases": [
+        "猫",
+        "貓",
+        "小猫",
+        "小貓",
+        "白猫",
+        "白貓"
+      ],
+      "category": "龍蛇禽獸等類",
+      "quote": "貓捕鼠者大得財",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "horse",
+      "label": "马",
+      "aliases": [
+        "马匹",
+        "馬匹",
+        "一匹马",
+        "一匹馬",
+        "白马",
+        "白馬"
+      ],
+      "category": "牛馬豬羊六畜",
+      "quote": "馬行千里大喜至",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "cow",
+      "label": "牛",
+      "aliases": [
+        "牛",
+        "黄牛",
+        "黃牛",
+        "水牛",
+        "小牛"
+      ],
+      "category": "牛馬豬羊六畜",
+      "quote": "牛出門好事立至",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "pig",
+      "label": "猪",
+      "aliases": [
+        "猪",
+        "豬",
+        "小猪",
+        "小豬",
+        "野猪",
+        "野豬"
+      ],
+      "category": "牛馬豬羊六畜",
+      "quote": "殺豬吉豬自死凶",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "fish",
+      "label": "鱼",
+      "aliases": [
+        "鱼",
+        "魚",
+        "鱼群",
+        "魚群",
+        "鲤鱼",
+        "鯉魚"
+      ],
+      "category": "龜鱉魚蝦昆蟲",
+      "quote": "群魚游水主有財",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "turtle",
+      "label": "乌龟",
+      "aliases": [
+        "乌龟",
+        "烏龜",
+        "龟",
+        "龜",
+        "海龟",
+        "海龜"
+      ],
+      "category": "龜鱉魚蝦昆蟲",
+      "quote": "見龜者主女人貴",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "insect",
+      "label": "昆虫",
+      "aliases": [
+        "昆虫",
+        "昆蟲",
+        "虫子",
+        "蟲子",
+        "飞虫",
+        "飛蟲"
+      ],
+      "category": "龜鱉魚蝦昆蟲",
+      "quote": "身坐魚蟲病患除",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "flying",
+      "label": "飞行",
+      "aliases": [
+        "飞行",
+        "飛行",
+        "飞起来",
+        "飛起來",
+        "飞上天",
+        "飛上天"
+      ],
+      "category": "天地日月星辰",
+      "quote": "飛上天富貴大吉",
+      "source_id": "zhougong-public-domain-v1"
+    },
+    {
+      "id": "falling",
+      "label": "坠落",
+      "aliases": [
+        "坠落",
+        "墜落",
+        "掉下",
+        "掉下来",
+        "掉下來",
+        "跳下",
+        "跳楼",
+        "跳樓",
+        "跌落",
+        "下坠",
+        "下墜"
+      ],
+      "category": "門戶井灶廚廁",
+      "quote": "身墜井中疾病凶",
+      "source_id": "zhougong-public-domain-v1"
+    }
+  ]
+}

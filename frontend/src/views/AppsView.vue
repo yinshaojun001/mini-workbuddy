@@ -2,7 +2,7 @@
 import { AppWindow, Copy, ExternalLink, Pencil, Plus, Trash2, X } from 'lucide-vue-next'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { api } from '@/api/client'
-import type { Agent, PublishedApp } from '@/types'
+import type { Agent, PublishedApp, RuntimeAdapter } from '@/types'
 
 const items = ref<PublishedApp[]>([])
 const agents = ref<Agent[]>([])
@@ -11,7 +11,7 @@ const message = ref('')
 const loading = ref(false)
 const showForm = ref(false)
 const editing = ref<PublishedApp | null>(null)
-const form = reactive({ name: '', slug: '', agent_id: '', enabled: true, daily_limit: 3, ttl_hours: 24, max_questions: 20 })
+const form = reactive({ name: '', slug: '', agent_id: '', runtime_adapter: 'fortune' as RuntimeAdapter, enabled: true, daily_limit: 3, ttl_hours: 24, max_questions: 20 })
 
 const enabledAgents = computed(() => agents.value.filter((item) => item.enabled))
 const healthText = {
@@ -19,7 +19,11 @@ const healthText = {
   disabled: '已停用',
   agent_unavailable: 'Agent 不可用',
   model_unavailable: '模型未就绪',
+  adapter_unavailable: '运行适配器不可用',
+  reference_unavailable: '梦象资料不可用',
 }
+const adapterText:Record<RuntimeAdapter,string>={fortune:'八字排盘',dream:'梦境解读'}
+const builtinAdapterLocked=computed(()=>editing.value?.id==='fortune'||editing.value?.id==='dream')
 
 async function load() {
   error.value = ''
@@ -45,6 +49,7 @@ function open(item?: PublishedApp) {
     name: item.name,
     slug: item.slug,
     agent_id: item.agent_id,
+    runtime_adapter: item.runtime_adapter,
     enabled: item.enabled,
     daily_limit: item.daily_limit,
     ttl_hours: item.ttl_hours,
@@ -53,6 +58,7 @@ function open(item?: PublishedApp) {
     name: '',
     slug: '',
     agent_id: enabledAgents.value[0]?.id || '',
+    runtime_adapter: 'fortune',
     enabled: true,
     daily_limit: 3,
     ttl_hours: 24,
@@ -115,10 +121,11 @@ onMounted(load)
 
   <div v-if="items.length" class="table-wrap">
     <table class="data-table app-table">
-      <thead><tr><th>应用</th><th>绑定 Agent</th><th>访问策略</th><th>状态</th><th>公开地址</th><th></th></tr></thead>
+      <thead><tr><th>应用</th><th>运行类型</th><th>绑定 Agent</th><th>访问策略</th><th>状态</th><th>公开地址</th><th></th></tr></thead>
       <tbody>
         <tr v-for="item in items" :key="item.id">
           <td><div class="primary-cell">{{ item.name }}</div><div class="cell-sub">/{{ item.slug }}</div></td>
+          <td>{{adapterText[item.runtime_adapter]}}</td>
           <td>{{ agentName(item.agent_id) }}</td>
           <td><div>{{ item.daily_limit }} 次/日 · {{ item.max_questions }} 次追问</div><div class="cell-sub">保存 {{ item.ttl_hours }} 小时</div></td>
           <td><span class="badge" :class="item.health === 'ready' ? 'badge--ok' : item.health === 'disabled' ? '' : 'badge--warn'">{{ healthText[item.health] }}</span></td>
@@ -137,6 +144,7 @@ onMounted(load)
         <div class="field"><label for="app-name">应用名称</label><input id="app-name" v-model.trim="form.name" required maxlength="80" /></div>
         <div class="field"><label for="app-slug">Slug</label><input id="app-slug" v-model.trim="form.slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="fortune" /></div>
         <div class="field field--full"><label for="app-agent">绑定 Agent</label><select id="app-agent" v-model="form.agent_id" required><option disabled value="">请选择 Agent</option><option v-for="agent in agents" :key="agent.id" :value="agent.id" :disabled="!agent.enabled && agent.id !== form.agent_id">{{ agent.name }}{{ agent.enabled ? '' : '（已停用）' }}</option></select><div class="field-help">公开运行仍会在服务端强制禁用全部工具。</div></div>
+        <div class="field"><label for="app-adapter">运行类型</label><select id="app-adapter" v-model="form.runtime_adapter" :disabled="builtinAdapterLocked"><option value="fortune">八字排盘</option><option value="dream">梦境解读</option></select></div>
         <div class="field"><label for="daily-limit">每日完整报告</label><input id="daily-limit" v-model.number="form.daily_limit" type="number" min="1" max="20" required /></div>
         <div class="field"><label for="ttl-hours">资料保存小时</label><input id="ttl-hours" v-model.number="form.ttl_hours" type="number" min="1" max="168" required /></div>
         <div class="field"><label for="max-questions">单次追问上限</label><input id="max-questions" v-model.number="form.max_questions" type="number" min="0" max="100" required /></div>

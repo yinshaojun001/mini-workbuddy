@@ -68,10 +68,18 @@ def enable_model(workspace):
 
 def configure_fakes(monkeypatch, workspace):
     from app.public_runtime import router
+    from app.config import get_settings
+    from app.public_runtime.adapters.fortune import FortunePublicAdapter
+    from app.public_runtime.adapters.registry import (
+        PublicAdapterRegistry,
+        configure_public_adapter_registry,
+    )
 
     enable_model(workspace)
     RecordingAdapter.calls.clear()
-    monkeypatch.setattr(router, "chart_client_factory", FakeChartClient)
+    configure_public_adapter_registry(
+        PublicAdapterRegistry([FortunePublicAdapter(get_settings(), FakeChartClient())])
+    )
     monkeypatch.setattr(router, "adapter_factory", RecordingAdapter)
 
 
@@ -114,6 +122,27 @@ def test_public_birth_validation_and_body_limit_use_public_errors(client):
         headers=ORIGIN,
     )
     assert duplicates.status_code == 422
+    non_object = client.post(
+        "/api/public/apps/fortune/sessions",
+        json=[birth_payload()],
+        headers=ORIGIN,
+    )
+    assert non_object.status_code == 422
+    assert non_object.json()["error"]["code"] == "INVALID_BIRTH_INPUT"
+    malformed = client.post(
+        "/api/public/apps/fortune/sessions",
+        content=b'{"birth_date":',
+        headers={**ORIGIN, "content-type": "application/json"},
+    )
+    assert malformed.status_code == 422
+    assert malformed.json()["error"]["code"] == "INVALID_BIRTH_INPUT"
+    invalid_utf8 = client.post(
+        "/api/public/apps/fortune/sessions",
+        content=b"\xff",
+        headers={**ORIGIN, "content-type": "application/json"},
+    )
+    assert invalid_utf8.status_code == 422
+    assert invalid_utf8.json()["error"]["code"] == "INVALID_BIRTH_INPUT"
     oversized = client.post(
         "/api/public/apps/fortune/sessions",
         content=b"{" + b" " * (17 * 1024) + b"}",
@@ -127,7 +156,7 @@ def test_public_report_and_question_force_empty_tools(client, workspace, monkeyp
     configure_fakes(monkeypatch, workspace)
     created = create_session(client)
     session_id = created["session"]["id"]
-    assert created["session"]["status"] == "chart_ready"
+    assert created["session"]["status"] == "context_ready"
     assert created["quota"]["remaining"] == 2
 
     report = client.post(f"/api/public/apps/fortune/sessions/{session_id}/report", headers=ORIGIN)
@@ -245,9 +274,17 @@ def test_failed_public_runs_persist_only_safe_diagnostics(
     client, workspace, monkeypatch, error, safe_code, terminal_type
 ):
     from app.public_runtime import router
+    from app.config import get_settings
+    from app.public_runtime.adapters.fortune import FortunePublicAdapter
+    from app.public_runtime.adapters.registry import (
+        PublicAdapterRegistry,
+        configure_public_adapter_registry,
+    )
 
     enable_model(workspace)
-    monkeypatch.setattr(router, "chart_client_factory", FakeChartClient)
+    configure_public_adapter_registry(
+        PublicAdapterRegistry([FortunePublicAdapter(get_settings(), FakeChartClient())])
+    )
     FailingAdapter.error = error
     monkeypatch.setattr(router, "adapter_factory", FailingAdapter)
     session_id = create_session(client)["session"]["id"]

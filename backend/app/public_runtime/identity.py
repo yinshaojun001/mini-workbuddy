@@ -6,7 +6,8 @@ import secrets
 from fastapi import Request, Response
 
 COOKIE_NAME = "fortune_visitor"
-COOKIE_PATH = "/api/public/apps/fortune"
+COOKIE_PATH = "/api/public/apps"
+LEGACY_COOKIE_PATH = "/api/public/apps/fortune"
 
 
 def _signature(visitor_id: str, secret: str) -> str:
@@ -27,15 +28,18 @@ def visitor_identity(request: Request, response: Response, secret: str) -> str:
     visitor_id = parse_token(request.cookies.get(COOKIE_NAME), secret)
     if visitor_id is None:
         visitor_id = secrets.token_urlsafe(32)
-        response.set_cookie(
-            COOKIE_NAME,
-            f"{visitor_id}.{_signature(visitor_id, secret)}",
-            max_age=30 * 24 * 60 * 60,
-            httponly=True,
-            secure=not request.url.hostname in {"localhost", "127.0.0.1", "testserver"},
-            samesite="lax",
-            path=COOKIE_PATH,
-        )
+    token = f"{visitor_id}.{_signature(visitor_id, secret)}"
+    response.set_cookie(
+        COOKIE_NAME,
+        token,
+        max_age=30 * 24 * 60 * 60,
+        httponly=True,
+        secure=not request.url.hostname in {"localhost", "127.0.0.1", "testserver"},
+        samesite="lax",
+        path=COOKIE_PATH,
+    )
+    if request.url.path.startswith(LEGACY_COOKIE_PATH):
+        response.delete_cookie(COOKIE_NAME, path=LEGACY_COOKIE_PATH)
     return visitor_id
 
 

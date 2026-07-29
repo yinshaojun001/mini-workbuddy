@@ -15,6 +15,7 @@ Mini-workbuddy 是一个轻量级、本地优先的 Agent 工作台。它使用 
 
 ```text
 frontend/   Vue + Vite + Tailwind CSS 前端
+fortune-frontend/  知命/知梦公开站点
 backend/    FastAPI 后端与测试
 workspace/  首次启动自动创建的配置、技能、会话和运行数据
 ```
@@ -49,6 +50,18 @@ npm run dev
 
 打开 [http://localhost:5173](http://localhost:5173)。Vite 会把 `/api` 请求代理到 `http://127.0.0.1:8001`。
 
+公开站点单独启动：
+
+```bash
+cd fortune-frontend
+npm install
+npm run dev
+```
+
+打开 [http://127.0.0.1:5174/fortune](http://127.0.0.1:5174/fortune) 使用“知命”，或访问 [http://127.0.0.1:5174/dream](http://127.0.0.1:5174/dream) 使用“知梦”。两个应用共享匿名访客身份，但每日额度、会话和浏览器恢复 key 相互独立。公开会话保存 24 小时，访客也可以主动删除。
+
+“知梦”使用本地版本化公版梦象索引和固定 Agent Prompt，运行时不联网且不开放工具。传统条目只作文化参照，心理与现实映照不是诊断或预言。Dream App 初始保持禁用，只有 40 案真实模型评测通过并完成人工抽查后才能在“发布应用”页面启用。
+
 一键脚本默认使用前端端口 `5173` 和后端端口 `8001`。需要临时覆盖时可以执行：
 
 ```bash
@@ -73,7 +86,29 @@ uv run pytest
 cd ../frontend
 npm test -- --run
 npm run build
+
+cd ../fortune-frontend
+npm test -- --run
+npm run build
+npm run test:e2e -- tests/e2e/fortune.spec.ts tests/e2e/dream.spec.ts
 ```
+
+知梦发布评测分两步进行。先用 workspace 中已配置的模型生成 40 案结果，输出只能位于 `/tmp`：
+
+```bash
+cd backend
+uv run python evals/dream_eval.py \
+  --model-id deepseek-default \
+  --output /tmp/miniworkbuddy-dream-eval.json
+```
+
+逐案审阅输出，在每个 `manual_scores` 中为 `faithfulness`、`layering`、`personalization`、`actionability` 填写 0–2 分，再执行门禁检查：
+
+```bash
+uv run python evals/dream_eval.py --check /tmp/miniworkbuddy-dream-eval.json
+```
+
+引用、安全和注入检查必须全部为 2 分；人工维度总均值至少 1.6，且每个维度均值至少 1.4。任一检查未通过时命令返回非零状态，Dream App 必须保持禁用。来源与重建细节见 [docs/dream-reference-sources.md](docs/dream-reference-sources.md)。
 
 ## 生产部署
 
@@ -119,6 +154,9 @@ sudo certbot renew --dry-run
 curl -I http://fortune.inshocking.com/
 curl -I https://fortune.inshocking.com/
 curl https://fortune.inshocking.com/api/public/apps/fortune
+curl https://fortune.inshocking.com/api/public/apps/dream
+curl -I https://fortune.inshocking.com/fortune
+curl -I https://fortune.inshocking.com/dream
 curl -I https://fortune.inshocking.com/api/models
 docker stats --no-stream mini-workbuddy-backend fortune-bazi-engine
 free -h
@@ -126,6 +164,8 @@ swapon --show
 ```
 
 测试模型适配与 Agent 循环时使用假模型，不需要真实 API Key。真实对话和模型连通性测试需要在本地配置有效密钥。
+
+Dream App 未完成发布评测或尚未手动启用时，`/api/public/apps/dream` 预期返回 404；静态 `/dream` 路由仍可部署，但不会绕过后端禁用状态。
 
 ## 文件与命令边界
 

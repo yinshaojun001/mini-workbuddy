@@ -25,7 +25,12 @@ def cleanup_expired_sessions(
                 raise
         if datetime.fromisoformat(session["expires_at"]) <= now:
             if session.get("reservation_id") and not session.get("quota_committed"):
-                quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+                quota.release(
+                    session["app_id"],
+                    session["owner_hash"],
+                    session["ip_hash"],
+                    session["reservation_id"],
+                )
             try:
                 sessions.delete(session["id"])
             except AppError as error:

@@ -22,7 +22,9 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["."]
 asyncio_mode = "auto"
+markers = [
+  "live_eval: requires a configured real model and is not part of default CI",
+]
 
 [tool.uv]
 package = false
-

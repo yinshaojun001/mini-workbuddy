@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.apps.repository import AppRepository
 from app.config import get_settings
 from app.errors import AppError
+from app.public_runtime.adapters.registry import get_public_adapter_registry
 from app.storage.collections import CollectionRepository
 
 router = APIRouter(prefix="/api/apps", tags=["发布应用"])
@@ -19,6 +20,7 @@ class AppInput(BaseModel):
     name: str = Field(min_length=1, max_length=80)
     slug: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$", min_length=1, max_length=60)
     agent_id: str
+    runtime_adapter: Literal["fortune", "dream"] = "fortune"
     enabled: bool = True
     daily_limit: int = Field(default=3, ge=1, le=20)
     ttl_hours: int = Field(default=24, ge=1, le=168)
@@ -33,10 +35,27 @@ def validate_agent(agent_id: str) -> None:
     CollectionRepository(get_settings().workspace_dir / "agents.json").get(agent_id)
 
 
-def app_health(item: dict) -> Literal["ready", "disabled", "agent_unavailable", "model_unavailable"]:
+def app_health(
+    item: dict,
+) -> Literal[
+    "ready",
+    "disabled",
+    "agent_unavailable",
+    "model_unavailable",
+    "adapter_unavailable",
+    "reference_unavailable",
+]:
     if not item["enabled"]:
         return "disabled"
     settings = get_settings()
+    try:
+        adapter_health = get_public_adapter_registry().get(
+            item.get("runtime_adapter", "fortune")
+        ).health()
+    except AppError:
+        return "adapter_unavailable"
+    if adapter_health != "ready":
+        return "reference_unavailable" if adapter_health == "reference_unavailable" else "adapter_unavailable"
     try:
         agent = CollectionRepository(settings.workspace_dir / "agents.json").get(item["agent_id"])
         model = CollectionRepository(settings.workspace_dir / "models.json").get(agent["model_id"])
@@ -50,7 +69,13 @@ def app_health(item: dict) -> Literal["ready", "disabled", "agent_unavailable", 
 
 
 def public_item(item: dict) -> dict:
-    return {**item, "health": app_health(item), "public_url": f"{get_settings().fortune_origin.rstrip('/')}/"}
+    slug = item["slug"]
+    return {
+        "runtime_adapter": "fortune",
+        **item,
+        "health": app_health(item),
+        "public_url": f"{get_settings().fortune_origin.rstrip('/')}/{slug}",
+    }
 
 
 @router.get("")
@@ -74,6 +99,10 @@ def create_app(payload: AppInput) -> dict:
 @router.put("/{app_id}")
 def update_app(app_id: str, payload: AppInput) -> dict:
     validate_agent(payload.agent_id)
+    existing = repo().get(app_id)
+    current_adapter = existing.get("runtime_adapter", "fortune")
+    if app_id in {"fortune", "dream"} and payload.runtime_adapter != current_adapter:
+        raise AppError("APP_ADAPTER_IMMUTABLE", "内置应用不能更换运行适配器", 409)
     values = {**payload.model_dump(), "updated_at": datetime.now(UTC).isoformat()}
     return public_item(repo().update(app_id, values))
 

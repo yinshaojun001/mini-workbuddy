@@ -29,8 +29,11 @@ class QuotaRepository:
         day, separator, _ = reservation_id.partition(".")
         return day if separator and len(day) == 10 else self._day()
 
-    def _keys(self, visitor_hash: str, ip_hash: str) -> tuple[str, str]:
-        return f"visitor:{visitor_hash}", f"pair:{visitor_hash}:{ip_hash}"
+    def _keys(self, app_id: str, visitor_hash: str, ip_hash: str) -> tuple[str, str]:
+        return (
+            f"app:{app_id}:visitor:{visitor_hash}",
+            f"app:{app_id}:pair:{visitor_hash}:{ip_hash}",
+        )
 
     def _active(self, record: dict, now: datetime) -> dict:
         reservations = {
@@ -40,12 +43,12 @@ class QuotaRepository:
         }
         return {"committed": record.get("committed", 0), "reservations": reservations}
 
-    def reserve(self, visitor_hash: str, ip_hash: str, limit: int) -> str:
+    def reserve(self, app_id: str, visitor_hash: str, ip_hash: str, limit: int) -> str:
         with self._lock:
             store = self._store()
             data = store.read()
             now = self.now()
-            keys = self._keys(visitor_hash, ip_hash)
+            keys = self._keys(app_id, visitor_hash, ip_hash)
             records = {key: self._active(data.get(key, {}), now) for key in keys}
             if any(record["committed"] + len(record["reservations"]) >= limit for record in records.values()):
                 raise AppError(
@@ -62,18 +65,25 @@ class QuotaRepository:
             store.write(data)
             return reservation_id
 
-    def commit(self, visitor_hash: str, ip_hash: str, reservation_id: str) -> None:
-        self._finish(visitor_hash, ip_hash, reservation_id, commit=True)
+    def commit(self, app_id: str, visitor_hash: str, ip_hash: str, reservation_id: str) -> None:
+        self._finish(app_id, visitor_hash, ip_hash, reservation_id, commit=True)
 
-    def release(self, visitor_hash: str, ip_hash: str, reservation_id: str) -> None:
-        self._finish(visitor_hash, ip_hash, reservation_id, commit=False)
+    def release(self, app_id: str, visitor_hash: str, ip_hash: str, reservation_id: str) -> None:
+        self._finish(app_id, visitor_hash, ip_hash, reservation_id, commit=False)
 
-    def _finish(self, visitor_hash: str, ip_hash: str, reservation_id: str, commit: bool) -> None:
+    def _finish(
+        self,
+        app_id: str,
+        visitor_hash: str,
+        ip_hash: str,
+        reservation_id: str,
+        commit: bool,
+    ) -> None:
         with self._lock:
             store = self._store(self._reservation_day(reservation_id))
             data = store.read()
             changed = False
-            for key in self._keys(visitor_hash, ip_hash):
+            for key in self._keys(app_id, visitor_hash, ip_hash):
                 record = self._active(data.get(key, {}), self.now())
                 if reservation_id in record["reservations"]:
                     record["reservations"].pop(reservation_id)
@@ -84,14 +94,17 @@ class QuotaRepository:
             if changed:
                 store.write(data)
 
-    def remaining(self, visitor_hash: str, ip_hash: str, limit: int) -> int:
+    def remaining(self, app_id: str, visitor_hash: str, ip_hash: str, limit: int) -> int:
         with self._lock:
             data = self._store().read()
             now = self.now()
             used = max(
                 (
                     record["committed"] + len(record["reservations"])
-                    for record in (self._active(data.get(key, {}), now) for key in self._keys(visitor_hash, ip_hash))
+                    for record in (
+                        self._active(data.get(key, {}), now)
+                        for key in self._keys(app_id, visitor_hash, ip_hash)
+                    )
                 ),
                 default=0,
             )

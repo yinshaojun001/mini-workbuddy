@@ -82,3 +82,25 @@ def test_claim_run_is_atomic_and_rejects_a_second_active_run(tmp_path):
     with pytest.raises(AppError) as error:
         repo.claim_run("one", "owner", "report", 20)
     assert error.value.code == "RUN_ALREADY_ACTIVE"
+
+
+def test_repository_reads_new_context_and_old_fortune_chart(tmp_path):
+    repo = PublicSessionRepository(tmp_path / "sessions")
+    expires_at = datetime.now(UTC) + timedelta(hours=1)
+    dream = session_record("new", expires_at, status="context_ready")
+    dream["app_id"] = "dream"
+    repo.create(dream, {"dream_text": "一段只保存在输入文件里的梦境"}, {"kind": "dream"})
+
+    assert repo.input_data("new")["dream_text"] == "一段只保存在输入文件里的梦境"
+    assert repo.context("new") == {"kind": "dream"}
+    assert (tmp_path / "sessions" / "new" / "context.json").is_file()
+    assert not (tmp_path / "sessions" / "new" / "chart.json").exists()
+
+    repo.create(session_record("old", expires_at), {}, {"temporary": True})
+    directory = tmp_path / "sessions" / "old"
+    (directory / "context.json").unlink()
+    (directory / "chart.json").write_text('{"pillars": {}}', encoding="utf-8")
+
+    assert repo.context("old") == {"kind": "fortune", "pillars": {}}
+    snapshot = repo.snapshot("old")
+    assert set(snapshot) == {"session", "input", "context", "messages"}

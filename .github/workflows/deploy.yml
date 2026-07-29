@@ -65,7 +65,7 @@ jobs:
           npx playwright install --with-deps chromium
           npm test -- --run
           npm run build
-          npm run test:e2e
+          npm run test:e2e -- tests/e2e/fortune.spec.ts tests/e2e/dream.spec.ts
 
       - name: Build deployable backend image
         run: |

@@ -16,14 +16,14 @@ class PublicSessionRepository:
     def __init__(self, root: Path) -> None:
         self.root = root
 
-    def create(self, session: dict, birth_input: dict, chart: dict) -> dict:
+    def create(self, session: dict, input_data: dict, context: dict) -> dict:
         with self._lock:
             directory = self.root / session["id"]
             directory.mkdir(parents=True)
             (directory / "runs").mkdir()
             AtomicJsonStore(directory / "session.json", session).write(session)
-            AtomicJsonStore(directory / "input.json", birth_input).write(birth_input)
-            AtomicJsonStore(directory / "chart.json", chart).write(chart)
+            AtomicJsonStore(directory / "input.json", input_data).write(input_data)
+            AtomicJsonStore(directory / "context.json", context).write(context)
             AtomicJsonStore(directory / "messages.json", []).write([])
         return session
 
@@ -51,7 +51,11 @@ class PublicSessionRepository:
     def claim_run(self, session_id: str, owner_hash: str, mode: str, max_questions: int) -> dict:
         with self._lock:
             session = self.get_owned(session_id, owner_hash)
-            allowed = {"chart_ready", "report_failed", "interrupted"} if mode == "report" else {"report_ready"}
+            allowed = (
+                {"context_ready", "chart_ready", "report_failed", "interrupted"}
+                if mode == "report"
+                else {"report_ready"}
+            )
             if session["status"] in {"report_running", "question_running"}:
                 raise AppError("RUN_ALREADY_ACTIVE", "当前会话已有解读正在生成", 409)
             if session["status"] not in allowed:
@@ -65,13 +69,30 @@ class PublicSessionRepository:
             )
             return session
 
-    def chart(self, session_id: str) -> dict:
+    def context(self, session_id: str) -> dict:
         self.get(session_id)
-        return json.loads((self.root / session_id / "chart.json").read_text(encoding="utf-8"))
+        directory = self.root / session_id
+        try:
+            context_path = directory / "context.json"
+            if context_path.is_file():
+                return json.loads(context_path.read_text(encoding="utf-8"))
+            legacy = json.loads((directory / "chart.json").read_text(encoding="utf-8"))
+            return legacy if legacy.get("kind") else {"kind": "fortune", **legacy}
+        except (OSError, json.JSONDecodeError, AttributeError) as exc:
+            raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404) from exc
+
+    def input_data(self, session_id: str) -> dict:
+        self.get(session_id)
+        try:
+            return json.loads((self.root / session_id / "input.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404) from exc
+
+    def chart(self, session_id: str) -> dict:
+        return self.context(session_id)
 
     def birth_input(self, session_id: str) -> dict:
-        self.get(session_id)
-        return json.loads((self.root / session_id / "input.json").read_text(encoding="utf-8"))
+        return self.input_data(session_id)
 
     def messages(self, session_id: str) -> list[dict]:
         self.get(session_id)
@@ -92,15 +113,14 @@ class PublicSessionRepository:
     def snapshot(self, session_id: str) -> dict[str, Any]:
         with self._lock:
             session = self.get(session_id)
-            directory = self.root / session_id
             try:
                 return {
                     "session": session,
-                    "birth": json.loads((directory / "input.json").read_text(encoding="utf-8")),
-                    "chart": json.loads((directory / "chart.json").read_text(encoding="utf-8")),
-                    "messages": json.loads((directory / "messages.json").read_text(encoding="utf-8")),
+                    "input": self.input_data(session_id),
+                    "context": self.context(session_id),
+                    "messages": self.messages(session_id),
                 }
-            except (OSError, json.JSONDecodeError) as exc:
+            except (OSError, json.JSONDecodeError, AppError) as exc:
                 raise AppError("PUBLIC_SESSION_NOT_FOUND", "会话不存在或已过期", 404) from exc
 
     def delete_for_admin(self, session_id: str) -> dict[str, Any]:

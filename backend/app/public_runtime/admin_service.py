@@ -129,22 +129,32 @@ class PublicRunsAdminService:
         app = next((item for item in self.apps.list() if item["id"] == session.get("app_id")), {})
         telemetry = self._safe_telemetry(self.events.events(session_id))
         self.sessions.get(session_id)
-        return {
+        kind = "dream" if snapshot["context"].get("kind") == "dream" else "fortune"
+        input_fields = self._input_summary(kind, snapshot["input"], include_sensitive)
+        context_summary = self._context_summary(kind, snapshot["context"])
+        messages = (
+            []
+            if kind == "dream"
+            else self._safe_messages(snapshot["messages"], snapshot["input"], include_sensitive)
+        )
+        result = {
             "session": self._summary(
                 session,
                 app,
                 telemetry,
                 message_count=len(snapshot["messages"]) if isinstance(snapshot["messages"], list) else 0,
             ),
-            "birth": self._birth(snapshot["birth"], include_sensitive),
-            "chart": self._chart_summary(snapshot["chart"]),
-            "messages": self._safe_messages(
-                snapshot["messages"], snapshot["birth"], include_sensitive
-            ),
+            "input": {"kind": kind, "fields": input_fields},
+            "context": {"kind": kind, "summary": context_summary},
+            "messages": messages,
             "runs": telemetry["runs"],
             "events": telemetry["events"],
             "historical_events_unavailable": telemetry["historical_events_unavailable"],
         }
+        if kind == "fortune":
+            result["birth"] = input_fields
+            result["chart"] = context_summary
+        return result
 
     def stats(self) -> dict[str, Any]:
         persisted = self.metrics.store.read()
@@ -166,6 +176,7 @@ class PublicRunsAdminService:
         session = self.sessions.delete_for_admin(session_id)
         if session.get("reservation_id") and not session.get("quota_committed"):
             self.quota.release(
+                session["app_id"],
                 session["owner_hash"],
                 session["ip_hash"],
                 session["reservation_id"],
@@ -257,6 +268,45 @@ class PublicRunsAdminService:
             if isinstance(gan, str):
                 safe_day_master["gan"] = gan
         return {"pillars": safe_pillars, "day_master": safe_day_master}
+
+    @classmethod
+    def _input_summary(
+        cls,
+        kind: str,
+        input_data: dict[str, Any],
+        include_sensitive: bool,
+    ) -> dict[str, Any]:
+        if kind == "fortune":
+            return cls._birth(input_data, include_sensitive)
+        dream_text = input_data.get("dream_text")
+        recent_context = input_data.get("recent_context")
+        emotions = input_data.get("emotions")
+        return {
+            "emotions": [item for item in emotions if isinstance(item, str)]
+            if isinstance(emotions, list)
+            else [],
+            "recurring": input_data.get("recurring") is True,
+            "dream_length": len(dream_text) if isinstance(dream_text, str) else 0,
+            "has_recent_context": bool(
+                isinstance(recent_context, str) and recent_context.strip()
+            ),
+        }
+
+    @classmethod
+    def _context_summary(cls, kind: str, context: dict[str, Any]) -> dict[str, Any]:
+        if kind == "fortune":
+            return cls._chart_summary(context)
+        references = context.get("traditional_references")
+        symbols = []
+        if isinstance(references, list):
+            for item in references:
+                if not isinstance(item, dict):
+                    continue
+                symbol_id = item.get("symbol_id")
+                label = item.get("label")
+                if isinstance(symbol_id, str) and isinstance(label, str):
+                    symbols.append({"id": symbol_id, "label": label})
+        return {"symbols": symbols}
 
     @staticmethod
     def _safe_messages(

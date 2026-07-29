@@ -14,7 +14,7 @@ async function mockApi(page: Page) {
 
 test('completes the birth form and renders a structured report', async ({ page }) => {
   await mockApi(page)
-  await page.goto('/')
+  await page.goto('/fortune')
   await page.getByLabel('公历出生日期').fill('1998-12-13')
   await page.getByRole('button', { name: '事业' }).click()
   await page.getByRole('button', { name: '开始排盘' }).click()
@@ -28,7 +28,7 @@ for (const width of [320, 390, 768, 1440]) {
   test(`has no page overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: width < 600 ? 844 : 900 })
     await mockApi(page)
-    await page.goto('/')
+    await page.goto('/fortune')
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
     expect(overflow).toBeLessThanOrEqual(0)
     if (width === 390) await page.screenshot({ path: 'test-results/fortune-form-mobile.png', fullPage: true })
@@ -43,7 +43,7 @@ test('shows the exhausted quota state without enabling submission', async ({ pag
     },
   }))
 
-  await page.goto('/')
+  await page.goto('/fortune')
 
   await expect(page.getByRole('button', { name: '今日额度已用完' })).toBeDisabled()
   await page.screenshot({ path: 'test-results/fortune-quota-exhausted.png', fullPage: true })
@@ -61,11 +61,20 @@ test('keeps the form usable after a public session error', async ({ page }) => {
     json: { error: { code: 'QUOTA_EXHAUSTED', message: '今日测算额度已用完', details: {} } },
   }))
 
-  await page.goto('/')
+  await page.goto('/fortune')
   await page.getByLabel('公历出生日期').fill('1998-12-13')
   await page.getByRole('button', { name: '开始排盘' }).click()
 
   await expect(page.getByText('今日测算额度已用完')).toBeVisible()
   await expect(page.getByRole('button', { name: '开始排盘' })).toBeEnabled()
   await page.screenshot({ path: 'test-results/fortune-public-error.png', fullPage: true })
+})
+
+test('redirects the root path to fortune', async ({ page }) => {
+  await mockApi(page)
+
+  await page.goto('/')
+
+  await expect(page).toHaveURL(/\/fortune$/)
+  await expect(page.getByRole('heading', { name: '出生信息' })).toBeVisible()
 })

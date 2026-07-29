@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.errors import register_error_handlers
 from app.apps.router import router as apps_router
+from app.bootstrap.dream import bootstrap_dream_agent
 from app.bootstrap.fortune import bootstrap_fortune
 from app.agents.router import router as agents_router
 from app.models.router import router as models_router
@@ -33,6 +34,7 @@ def create_app() -> FastAPI:
     async def lifespan(_: FastAPI):
         bootstrap_workspace(settings.workspace_dir)
         bootstrap_fortune(settings.workspace_dir)
+        bootstrap_dream_agent(settings.workspace_dir)
         public_rate_limiter.clear()
         sessions = PublicSessionRepository(settings.workspace_dir / "public_sessions")
         quota = QuotaRepository(settings.workspace_dir / "public_usage")

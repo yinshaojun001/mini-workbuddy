@@ -16,10 +16,10 @@ describe('public router', () => {
     expect(router.currentRoute.value.path).toBe('/fortune')
   })
 
-  it('exposes the fortune route without a placeholder dream route', () => {
+  it('exposes the complete fortune and dream routes', () => {
     const router = createPublicRouter(createMemoryHistory())
     const routes = router.getRoutes()
     expect(routes.some((route) => route.path === '/fortune')).toBe(true)
-    expect(routes.some((route) => route.path === '/dream')).toBe(false)
+    expect(routes.some((route) => route.path === '/dream')).toBe(true)
   })
 })

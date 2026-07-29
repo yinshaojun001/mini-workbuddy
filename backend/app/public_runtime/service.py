@@ -85,14 +85,14 @@ async def create_public_session(
         "attribution": engine_result["attribution"],
     }
     sessions, quota = repositories(settings)
-    reservation_id = quota.reserve(owner_hash, ip_hash, app["daily_limit"])
+    reservation_id = quota.reserve(app["id"], owner_hash, ip_hash, app["daily_limit"])
     now = datetime.now(UTC)
     session = {
         "id": str(uuid4()),
         "app_id": app["id"],
         "owner_hash": owner_hash,
         "ip_hash": ip_hash,
-        "status": "chart_ready",
+        "status": "context_ready",
         "reservation_id": reservation_id,
         "quota_committed": False,
         "question_count": 0,
@@ -103,7 +103,7 @@ async def create_public_session(
     try:
         sessions.create(session, birth.model_dump(mode="json"), chart)
     except Exception:
-        quota.release(owner_hash, ip_hash, reservation_id)
+        quota.release(app["id"], owner_hash, ip_hash, reservation_id)
         raise
     _, metrics = telemetry_repositories(settings)
     metrics.session_created(app["id"])
@@ -129,7 +129,12 @@ def owned_session(settings: Settings, app: dict, session_id: str, owner_hash: st
     expired = datetime.fromisoformat(session["expires_at"]) <= datetime.now(UTC)
     if session["app_id"] != app["id"] or expired:
         if session.get("reservation_id") and not session.get("quota_committed"):
-            quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+            quota.release(
+                session["app_id"],
+                session["owner_hash"],
+                session["ip_hash"],
+                session["reservation_id"],
+            )
         sessions.delete(session_id)
         if expired:
             _, metrics = telemetry_repositories(settings)
@@ -174,9 +179,19 @@ def public_agent_stream(
 
     if mode == "report" and session["status"] in {"report_failed", "interrupted"}:
         _, quota = repositories(settings)
-        quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+        quota.release(
+            session["app_id"],
+            session["owner_hash"],
+            session["ip_hash"],
+            session["reservation_id"],
+        )
         try:
-            reservation_id = quota.reserve(session["owner_hash"], session["ip_hash"], app["daily_limit"])
+            reservation_id = quota.reserve(
+                session["app_id"],
+                session["owner_hash"],
+                session["ip_hash"],
+                app["daily_limit"],
+            )
         except AppError:
             sessions.update(session_id, {"status": "report_failed", "updated_at": timestamp()})
             raise
@@ -186,7 +201,12 @@ def public_agent_stream(
     except AppError:
         if mode == "report":
             _, quota = repositories(settings)
-            quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+            quota.release(
+                session["app_id"],
+                session["owner_hash"],
+                session["ip_hash"],
+                session["reservation_id"],
+            )
             sessions.update(session_id, {"status": "report_failed", "updated_at": timestamp()})
         raise
     messages.append({"role": "user", "content": user_content})
@@ -274,7 +294,12 @@ def public_agent_stream(
             updates = {"status": "report_ready", "updated_at": now}
             if mode == "report":
                 _, quota = repositories(settings)
-                quota.commit(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+                quota.commit(
+                    session["app_id"],
+                    session["owner_hash"],
+                    session["ip_hash"],
+                    session["reservation_id"],
+                )
                 updates["quota_committed"] = True
             else:
                 updates["question_count"] = session["question_count"] + 1
@@ -286,7 +311,12 @@ def public_agent_stream(
             sessions.update(session_id, {"status": "interrupted", "updated_at": timestamp()})
             if mode == "report":
                 _, quota = repositories(settings)
-                quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+                quota.release(
+                    session["app_id"],
+                    session["owner_hash"],
+                    session["ip_hash"],
+                    session["reservation_id"],
+                )
             raise
         except AppError as error:
             sessions.update(
@@ -295,7 +325,12 @@ def public_agent_stream(
             )
             if mode == "report":
                 _, quota = repositories(settings)
-                quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+                quota.release(
+                    session["app_id"],
+                    session["owner_hash"],
+                    session["ip_hash"],
+                    session["reservation_id"],
+                )
             normalized_code = safe_error_code(error.code)
             record_event(failure_stage, normalized_code)
             metrics.run_failed(app["id"], mode, normalized_code)
@@ -307,7 +342,12 @@ def public_agent_stream(
             )
             if mode == "report":
                 _, quota = repositories(settings)
-                quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+                quota.release(
+                    session["app_id"],
+                    session["owner_hash"],
+                    session["ip_hash"],
+                    session["reservation_id"],
+                )
             record_event("agent.failed", "ENGINE_FAILED")
             metrics.run_failed(app["id"], mode, "ENGINE_FAILED")
             yield emit("run.failed", {"code": "MODEL_UNAVAILABLE", "message": "解读模型暂时不可用"})

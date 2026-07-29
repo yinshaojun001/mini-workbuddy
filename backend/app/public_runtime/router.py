@@ -72,7 +72,7 @@ def get_public_app(slug: str, request: Request, response: Response) -> dict:
         "max_questions": app["max_questions"],
         "locations": locations,
         "quota": {
-            "remaining": quota.remaining(owner_hash, ip_hash, app["daily_limit"]),
+            "remaining": quota.remaining(app["id"], owner_hash, ip_hash, app["daily_limit"]),
             "resets_at": quota.resets_at(),
         },
     }
@@ -90,7 +90,7 @@ async def create_session(slug: str, payload: BirthInput, request: Request, respo
     _, quota = repositories(settings)
     result["quota"] = {
         "daily_limit": app["daily_limit"],
-        "remaining": quota.remaining(owner_hash, ip_hash, app["daily_limit"]),
+        "remaining": quota.remaining(app["id"], owner_hash, ip_hash, app["daily_limit"]),
         "resets_at": quota.resets_at(),
     }
     return result
@@ -149,7 +149,12 @@ def delete_session(slug: str, session_id: str, request: Request, response: Respo
     sessions, session = owned_session(settings, app, session_id, owner_hash)
     if session.get("reservation_id") and not session.get("quota_committed"):
         _, quota = repositories(settings)
-        quota.release(session["owner_hash"], session["ip_hash"], session["reservation_id"])
+        quota.release(
+            session["app_id"],
+            session["owner_hash"],
+            session["ip_hash"],
+            session["reservation_id"],
+        )
     sessions.delete(session_id, owner_hash)
     PublicMetricsRepository(settings.workspace_dir / "public_metrics.json").session_deleted(
         app["id"], "visitor"

@@ -345,7 +345,7 @@ def test_public_run_stats_whitelists_tampered_metric_values(client, workspace):
 
 def test_admin_delete_rejects_running_and_releases_only_uncommitted_quota(client, workspace):
     quota = QuotaRepository(workspace / "public_usage")
-    reservation = quota.reserve("owner-a", "ip-a", 3)
+    reservation = quota.reserve("fortune", "owner-a", "ip-a", 3)
     create_session(
         workspace,
         SESSION_IDS["reserved"],
@@ -353,8 +353,8 @@ def test_admin_delete_rejects_running_and_releases_only_uncommitted_quota(client
         owner_hash="owner-a",
         ip_hash="ip-a",
     )
-    committed = quota.reserve("owner-b", "ip-b", 3)
-    quota.commit("owner-b", "ip-b", committed)
+    committed = quota.reserve("fortune", "owner-b", "ip-b", 3)
+    quota.commit("fortune", "owner-b", "ip-b", committed)
     create_session(
         workspace,
         SESSION_IDS["committed"],
@@ -371,9 +371,9 @@ def test_admin_delete_rejects_running_and_releases_only_uncommitted_quota(client
     assert (workspace / "public_sessions" / SESSION_IDS["delete_running"]).exists()
 
     assert client.delete(f"/api/public-runs/{SESSION_IDS['reserved']}").status_code == 204
-    assert quota.remaining("owner-a", "ip-a", 3) == 3
+    assert quota.remaining("fortune", "owner-a", "ip-a", 3) == 3
     assert client.delete(f"/api/public-runs/{SESSION_IDS['committed']}").status_code == 204
-    assert quota.remaining("owner-b", "ip-b", 3) == 2
+    assert quota.remaining("fortune", "owner-b", "ip-b", 3) == 2
 
     metrics = PublicMetricsRepository(workspace / "public_metrics.json")
     assert metrics.read()["apps"]["fortune"]["admin_deletions"] == 2

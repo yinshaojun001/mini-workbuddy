@@ -136,10 +136,10 @@ class PublicRunsAdminService:
                 telemetry,
                 message_count=len(snapshot["messages"]) if isinstance(snapshot["messages"], list) else 0,
             ),
-            "birth": self._birth(snapshot["birth"], include_sensitive),
-            "chart": self._chart_summary(snapshot["chart"]),
+            "birth": self._birth(snapshot["input"], include_sensitive),
+            "chart": self._chart_summary(snapshot["context"]),
             "messages": self._safe_messages(
-                snapshot["messages"], snapshot["birth"], include_sensitive
+                snapshot["messages"], snapshot["input"], include_sensitive
             ),
             "runs": telemetry["runs"],
             "events": telemetry["events"],
@@ -166,6 +166,7 @@ class PublicRunsAdminService:
         session = self.sessions.delete_for_admin(session_id)
         if session.get("reservation_id") and not session.get("quota_committed"):
             self.quota.release(
+                session["app_id"],
                 session["owner_hash"],
                 session["ip_hash"],
                 session["reservation_id"],

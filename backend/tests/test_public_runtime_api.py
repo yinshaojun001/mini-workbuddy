@@ -127,7 +127,7 @@ def test_public_report_and_question_force_empty_tools(client, workspace, monkeyp
     configure_fakes(monkeypatch, workspace)
     created = create_session(client)
     session_id = created["session"]["id"]
-    assert created["session"]["status"] == "chart_ready"
+    assert created["session"]["status"] == "context_ready"
     assert created["quota"]["remaining"] == 2
 
     report = client.post(f"/api/public/apps/fortune/sessions/{session_id}/report", headers=ORIGIN)

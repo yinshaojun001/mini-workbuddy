@@ -2,10 +2,12 @@
 """Build the reviewed dream-symbol index from a pinned upstream snapshot."""
 
 import argparse
+import io
 import json
 from pathlib import Path
 import tempfile
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
+import zipfile
 
 
 UPSTREAM_REPO = "tf1993614/Know-your-fate"
@@ -110,12 +112,19 @@ CURATED_SYMBOLS = (
 
 def download_sources(destination: Path) -> Path:
     destination.mkdir(parents=True, exist_ok=True)
-    base_url = (
-        f"https://raw.githubusercontent.com/{UPSTREAM_REPO}/{UPSTREAM_COMMIT}/{UPSTREAM_ROOT}"
+    archive_url = (
+        f"https://codeload.github.com/{UPSTREAM_REPO}/zip/{UPSTREAM_COMMIT}"
     )
+    request = Request(archive_url, headers={"User-Agent": "miniworkbuddy-dream-index-builder/1"})
+    with urlopen(request, timeout=60) as response:
+        archive = zipfile.ZipFile(io.BytesIO(response.read()))
+    archive_root = f"Know-your-fate-{UPSTREAM_COMMIT}/{UPSTREAM_ROOT}"
     for filename in CATEGORY_FILES:
-        with urlopen(f"{base_url}/{filename}", timeout=30) as response:
-            content = response.read()
+        member = f"{archive_root}/{filename}"
+        try:
+            content = archive.read(member)
+        except KeyError as exc:
+            raise RuntimeError(f"missing pinned source file in archive: {filename}") from exc
         (destination / filename).write_bytes(content)
     return destination
 

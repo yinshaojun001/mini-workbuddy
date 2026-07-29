@@ -21,6 +21,7 @@ SESSION_IDS = {
     "reserved": "00000000-0000-4000-8000-000000000008",
     "committed": "00000000-0000-4000-8000-000000000009",
     "delete_running": "00000000-0000-4000-8000-000000000010",
+    "dream_detail": "00000000-0000-4000-8000-000000000012",
 }
 
 
@@ -228,6 +229,8 @@ def test_public_run_detail_masks_birth_and_never_returns_chart_input(client, wor
     assert masked_response.status_code == 200
     masked = masked_response.json()
     masked_text = json.dumps(masked, ensure_ascii=False)
+    assert masked["input"] == {"kind": "fortune", "fields": masked["birth"]}
+    assert masked["context"] == {"kind": "fortune", "summary": masked["chart"]}
     assert masked["birth"]["name"] != "张三"
     assert masked["birth"]["birth_date"] == "****-**-**"
     assert masked["birth"]["birth_time"] == "**:**"
@@ -278,6 +281,80 @@ def test_public_run_detail_masks_birth_and_never_returns_chart_input(client, wor
     }
     assert sensitive["messages"][0]["content"] == "张三 female 1998-12-13 12:00 110000 110100 career"
     assert "CHART_INPUT_MUST_NOT_LEAK" not in json.dumps(sensitive, ensure_ascii=False)
+
+
+def test_dream_detail_never_exposes_text_context_or_messages(client, workspace):
+    private_dream = "PRIVATE_DREAM_TEXT_7X9 我梦见旧屋积水并一直寻找出口。"
+    private_context = "PRIVATE_RECENT_CONTEXT_4Q2 最近正在搬家。"
+    now = datetime.now(UTC)
+    session = {
+        "id": SESSION_IDS["dream_detail"],
+        "app_id": "dream",
+        "owner_hash": "private-owner",
+        "ip_hash": "private-ip",
+        "status": "report_ready",
+        "reservation_id": None,
+        "quota_committed": True,
+        "question_count": 1,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "expires_at": (now + timedelta(hours=1)).isoformat(),
+    }
+    repo = PublicSessionRepository(workspace / "public_sessions")
+    repo.create(
+        session,
+        {
+            "dream_text": private_dream,
+            "emotions": ["焦虑"],
+            "recurring": True,
+            "recent_context": private_context,
+        },
+        {
+            "kind": "dream",
+            "summary": {"emotions": ["焦虑"], "recurring": True},
+            "traditional_references": [
+                {"symbol_id": "house", "label": "房屋", "quote": "PRIVATE_QUOTE"},
+                {"symbol_id": "water", "label": "水", "quote": "PRIVATE_QUOTE"},
+            ],
+        },
+    )
+    repo.append_messages(
+        session["id"],
+        [
+            {"id": "m1", "role": "user", "content": private_dream, "created_at": now.isoformat()},
+            {"id": "m2", "role": "assistant", "content": "PRIVATE_REPORT", "created_at": now.isoformat()},
+        ],
+    )
+
+    for include_sensitive in (False, True):
+        response = client.get(
+            f"/api/public-runs/{session['id']}",
+            params={"include_sensitive": str(include_sensitive).lower()},
+        )
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["input"] == {
+            "kind": "dream",
+            "fields": {
+                "emotions": ["焦虑"],
+                "recurring": True,
+                "dream_length": len(private_dream),
+                "has_recent_context": True,
+            },
+        }
+        assert payload["context"] == {
+            "kind": "dream",
+            "summary": {
+                "symbols": [
+                    {"id": "house", "label": "房屋"},
+                    {"id": "water", "label": "水"},
+                ]
+            },
+        }
+        assert payload["messages"] == []
+        serialized = json.dumps(payload, ensure_ascii=False)
+        for marker in (private_dream, private_context, "PRIVATE_QUOTE", "PRIVATE_REPORT"):
+            assert marker not in serialized
 
 
 def test_historical_session_detail_reports_events_unavailable(client, workspace):

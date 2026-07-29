@@ -99,10 +99,22 @@ export interface PublicRunChartSummary {
   day_master: { gan?: string }
 }
 
+export interface PublicRunInputSummary {
+  kind: 'fortune' | 'dream'
+  fields: Record<string, unknown>
+}
+
+export interface PublicRunContextSummary {
+  kind: 'fortune' | 'dream'
+  summary: Record<string, unknown>
+}
+
 export interface PublicRunDetail {
   session: PublicRunSummary
-  birth: PublicRunBirth
-  chart: PublicRunChartSummary
+  input: PublicRunInputSummary
+  context: PublicRunContextSummary
+  birth?: PublicRunBirth
+  chart?: PublicRunChartSummary
   messages: Message[]
   runs: PublicRunGroup[]
   events: PublicRunEvent[]

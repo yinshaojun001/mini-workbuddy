@@ -16,14 +16,18 @@ const session = {
   last_run_status: 'completed' as const,
 }
 const stats = { apps: { fortune: { sessions_created: 1, runs_completed: 1, reports_failed: 0, questions_failed: 0, average_duration_ms: 50 } }, total: { sessions_created: 1, runs_completed: 1, reports_failed: 0, questions_failed: 0, average_duration_ms: 50 } }
-const detail = { session, birth: { name: '张*', birth_date: '****-**-**' }, chart: { pillars: { year: { gan_zhi: '戊寅' } }, day_master: { gan: '乙' } }, messages: [{ id: 'm1', role: 'assistant', content: '已脱敏', created_at: 'now' }], runs: [], events: [], historical_events_unavailable: false }
+const maskedBirth = { name: '张*', birth_date: '****-**-**' }
+const chartSummary = { pillars: { year: { gan_zhi: '戊寅' } }, day_master: { gan: '乙' } }
+const detail = { session, input: { kind: 'fortune', fields: maskedBirth }, context: { kind: 'fortune', summary: chartSummary }, birth: maskedBirth, chart: chartSummary, messages: [{ id: 'm1', role: 'assistant', content: '已脱敏', created_at: 'now' }], runs: [], events: [], historical_events_unavailable: false }
+const dreamSession = { ...session, session_id: '00000000-0000-4000-8000-000000000012', app_id: 'dream', app_name: '知梦' }
+const dreamDetail = { session: dreamSession, input: { kind: 'dream', fields: { emotions: ['焦虑'], recurring: true, dream_length: 42, has_recent_context: true } }, context: { kind: 'dream', summary: { symbols: [{ id: 'house', label: '房屋' }, { id: 'water', label: '水' }] } }, messages: [], runs: [], events: [], historical_events_unavailable: false }
 
 describe('PublicRunsView', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.mocked(listPublicRuns).mockResolvedValue({ items: [session], next_cursor: null, refreshed_at: 'now' })
     vi.mocked(getPublicRunStats).mockResolvedValue(stats as never)
-    vi.mocked(getPublicRun).mockImplementation(async (_id, sensitive) => sensitive ? { ...detail, birth: { ...detail.birth, name: '张三', birth_date: '1998-12-13' } } as never : detail as never)
+    vi.mocked(getPublicRun).mockImplementation(async (_id, sensitive) => sensitive ? { ...detail, input: { kind: 'fortune', fields: { ...maskedBirth, name: '张三', birth_date: '1998-12-13' } }, birth: { ...maskedBirth, name: '张三', birth_date: '1998-12-13' } } as never : detail as never)
     vi.mocked(deletePublicRun).mockResolvedValue(undefined)
     vi.stubGlobal('confirm', vi.fn(() => true))
   })
@@ -70,6 +74,22 @@ describe('PublicRunsView', () => {
     await flushPromises()
     expect(confirm).toHaveBeenCalledWith(expect.stringContaining('不会返还已消耗额度'))
     expect(deletePublicRun).toHaveBeenCalledWith(session.session_id)
+  })
+
+  it('shows a permanently redacted dream summary without a reveal action', async () => {
+    vi.mocked(listPublicRuns).mockResolvedValueOnce({ items: [dreamSession], next_cursor: null, refreshed_at: 'now' })
+    vi.mocked(getPublicRun).mockResolvedValue(dreamDetail as never)
+    const wrapper = mount(PublicRunsView)
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('梦境摘要')
+    expect(wrapper.text()).toContain('焦虑')
+    expect(wrapper.text()).toContain('房屋')
+    expect(wrapper.text()).toContain('水')
+    expect(wrapper.text()).not.toContain('显示敏感资料')
+    expect(wrapper.find('.public-birth .button').exists()).toBe(false)
   })
 
   it('keeps existing rows when automatic refresh fails', async () => {

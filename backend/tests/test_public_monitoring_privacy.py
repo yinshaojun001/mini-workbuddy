@@ -191,6 +191,7 @@ def test_public_monitoring_keeps_sensitive_data_out_of_default_and_permanent_sto
     sensitive_without_allowed_birth_and_messages = {
         **sensitive,
         "birth": {},
+        "input": {"kind": "fortune", "fields": {}},
         "messages": [],
     }
     _assert_absent(

@@ -25,8 +25,11 @@ describe('DreamForm', () => {
     }])
   })
 
-  it('limits emotion selection and disables submit for short dreams', async () => {
-    const wrapper = mount(DreamForm, { props: { emotions, maxEmotions: 3, remaining: 1, loading: false } })
+  it('limits emotion selection and explains short dreams on submit', async () => {
+    const wrapper = mount(DreamForm, {
+      attachTo: document.body,
+      props: { emotions, maxEmotions: 3, remaining: 1, loading: false },
+    })
     const buttons = wrapper.findAll('.emotion-grid button')
 
     await buttons[0].trigger('click')
@@ -34,7 +37,16 @@ describe('DreamForm', () => {
     await buttons[2].trigger('click')
 
     expect(buttons[3].attributes('disabled')).toBeDefined()
-    expect(wrapper.get('.primary-command').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('.primary-command').attributes('disabled')).toBeUndefined()
+
+    await wrapper.get('form').trigger('submit')
+    expect(wrapper.emitted('submit')).toBeUndefined()
+    expect(wrapper.get('.field-requirement').text()).toContain('请再补充 20 个字')
+    expect(document.activeElement).toBe(wrapper.get('#dream-text').element)
+
+    await wrapper.get('#dream-text').setValue('我梦见发烧后走进一间很安静的屋子，窗外一直在下雨。')
+    expect(wrapper.get('.field-requirement').text()).toContain('至少 20 字')
+    wrapper.unmount()
   })
 
   it('enforces text boundaries, keeps recent context optional, and handles exhausted quota', async () => {

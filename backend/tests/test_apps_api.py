@@ -49,3 +49,23 @@ def test_fortune_bootstrap_backfills_runtime_adapter(client, workspace):
 
     updated = json.loads(apps_path.read_text(encoding="utf-8"))
     assert next(item for item in updated if item["id"] == "fortune")["runtime_adapter"] == "fortune"
+
+
+def test_builtin_apps_cannot_change_runtime_adapter(client):
+    fortune = client.get("/api/apps/fortune").json()
+    response = client.put(
+        "/api/apps/fortune",
+        json={
+            "name": fortune["name"],
+            "slug": fortune["slug"],
+            "agent_id": fortune["agent_id"],
+            "runtime_adapter": "dream",
+            "enabled": fortune["enabled"],
+            "daily_limit": fortune["daily_limit"],
+            "ttl_hours": fortune["ttl_hours"],
+            "max_questions": fortune["max_questions"],
+        },
+    )
+
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "APP_ADAPTER_IMMUTABLE"

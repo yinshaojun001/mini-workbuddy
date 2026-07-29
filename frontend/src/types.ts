@@ -10,10 +10,12 @@ export interface Session { id: string; agent_id: string; title: string; status: 
 export interface Message { id: string; role: 'user' | 'assistant'; content: string; created_at: string }
 export interface RunEvent { run_id: string; sequence: number; timestamp: string; type: string; data: Record<string, any> }
 export interface RunSummary { id: string; session_id?: string; agent_id?: string; status: string; started_at: string; updated_at: string; event_count: number }
+export type RuntimeAdapter = 'fortune' | 'dream'
+export type PublishedAppHealth = 'ready' | 'disabled' | 'agent_unavailable' | 'model_unavailable' | 'adapter_unavailable' | 'reference_unavailable'
 export interface PublishedApp {
-  id: string; name: string; slug: string; agent_id: string; enabled: boolean;
+  id: string; name: string; slug: string; agent_id: string; runtime_adapter: RuntimeAdapter; enabled: boolean;
   daily_limit: number; ttl_hours: number; max_questions: number;
-  health: 'ready' | 'disabled' | 'agent_unavailable' | 'model_unavailable';
+  health: PublishedAppHealth;
   public_url: string; created_at: string; updated_at: string;
 }
 

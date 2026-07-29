@@ -5,10 +5,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import AppsView from './AppsView.vue'
 
 const app = {
-  id: 'fortune', name: '知命', slug: 'fortune', agent_id: 'fortune-bazi-agent', enabled: true,
+  id: 'fortune', name: '知命', slug: 'fortune', agent_id: 'fortune-bazi-agent', runtime_adapter: 'fortune', enabled: true,
   daily_limit: 3, ttl_hours: 24, max_questions: 20, health: 'model_unavailable',
-  public_url: 'https://fortune.inshocking.com/', created_at: '', updated_at: '',
+  public_url: 'https://fortune.inshocking.com/fortune', created_at: '', updated_at: '',
 }
+const dreamApp = { ...app, id: 'dream', name: '知梦', slug: 'dream', agent_id: 'dream-analysis-agent', runtime_adapter: 'dream', enabled: false, health: 'reference_unavailable', public_url: 'https://fortune.inshocking.com/dream' }
 const agent = {
   id: 'fortune-bazi-agent', name: '知命八字 Agent', description: '', model_id: 'deepseek-default',
   tool_ids: [], skill_ids: ['bazi-interpreter'], work_directory: '/tmp/fortune', enabled: true,
@@ -33,8 +34,9 @@ describe('AppsView', () => {
     const wrapper = mount(AppsView)
     await flushPromises()
     expect(wrapper.text()).toContain('知命')
+    expect(wrapper.text()).toContain('八字排盘')
     expect(wrapper.text()).toContain('模型未就绪')
-    expect(wrapper.get('a.public-link').attributes('href')).toBe('https://fortune.inshocking.com/')
+    expect(wrapper.get('a.public-link').attributes('href')).toBe('https://fortune.inshocking.com/fortune')
   })
 
   it('creates an app with the selected agent and limits', async () => {
@@ -54,7 +56,23 @@ describe('AppsView', () => {
     const createCall = fetchMock.mock.calls.find(([, init]) => init?.method === 'POST')
     expect(createCall?.[0]).toBe('/api/apps')
     expect(JSON.parse(String(createCall?.[1]?.body))).toMatchObject({
-      name: '知命测试', slug: 'fortune-test', agent_id: 'fortune-bazi-agent', daily_limit: 3, ttl_hours: 24,
+      name: '知命测试', slug: 'fortune-test', agent_id: 'fortune-bazi-agent', runtime_adapter: 'fortune', daily_limit: 3, ttl_hours: 24,
     })
+  })
+
+  it('shows dream adapter health and locks the adapter for builtin apps', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      return response(url === '/api/apps' ? [dreamApp] : [agent])
+    }))
+    const wrapper = mount(AppsView)
+    await flushPromises()
+    expect(wrapper.text()).toContain('梦境解读')
+    expect(wrapper.text()).toContain('梦象资料不可用')
+
+    await wrapper.get('button[title="编辑"]').trigger('click')
+    const select = wrapper.get('#app-adapter')
+    expect((select.element as HTMLSelectElement).value).toBe('dream')
+    expect(select.attributes('disabled')).toBeDefined()
   })
 })

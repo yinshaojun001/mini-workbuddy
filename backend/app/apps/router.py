@@ -99,6 +99,10 @@ def create_app(payload: AppInput) -> dict:
 @router.put("/{app_id}")
 def update_app(app_id: str, payload: AppInput) -> dict:
     validate_agent(payload.agent_id)
+    existing = repo().get(app_id)
+    current_adapter = existing.get("runtime_adapter", "fortune")
+    if app_id in {"fortune", "dream"} and payload.runtime_adapter != current_adapter:
+        raise AppError("APP_ADAPTER_IMMUTABLE", "内置应用不能更换运行适配器", 409)
     values = {**payload.model_dump(), "updated_at": datetime.now(UTC).isoformat()}
     return public_item(repo().update(app_id, values))
 

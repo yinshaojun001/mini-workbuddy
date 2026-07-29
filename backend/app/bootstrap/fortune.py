@@ -70,6 +70,7 @@ def bootstrap_fortune(root: Path) -> None:
                 "name": "知命",
                 "slug": "fortune",
                 "agent_id": AGENT_ID,
+                "runtime_adapter": "fortune",
                 "enabled": True,
                 "daily_limit": 3,
                 "ttl_hours": 24,
@@ -79,3 +80,11 @@ def bootstrap_fortune(root: Path) -> None:
             }
         )
         apps_store.write(apps)
+    else:
+        changed = False
+        for item in apps:
+            if (item["id"] == APP_ID or item["slug"] == "fortune") and "runtime_adapter" not in item:
+                item["runtime_adapter"] = "fortune"
+                changed = True
+        if changed:
+            apps_store.write(apps)

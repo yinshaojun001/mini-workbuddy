@@ -19,6 +19,7 @@ class AppInput(BaseModel):
     name: str = Field(min_length=1, max_length=80)
     slug: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$", min_length=1, max_length=60)
     agent_id: str
+    runtime_adapter: Literal["fortune", "dream"] = "fortune"
     enabled: bool = True
     daily_limit: int = Field(default=3, ge=1, le=20)
     ttl_hours: int = Field(default=24, ge=1, le=168)
@@ -33,7 +34,16 @@ def validate_agent(agent_id: str) -> None:
     CollectionRepository(get_settings().workspace_dir / "agents.json").get(agent_id)
 
 
-def app_health(item: dict) -> Literal["ready", "disabled", "agent_unavailable", "model_unavailable"]:
+def app_health(
+    item: dict,
+) -> Literal[
+    "ready",
+    "disabled",
+    "agent_unavailable",
+    "model_unavailable",
+    "adapter_unavailable",
+    "reference_unavailable",
+]:
     if not item["enabled"]:
         return "disabled"
     settings = get_settings()
@@ -50,7 +60,13 @@ def app_health(item: dict) -> Literal["ready", "disabled", "agent_unavailable", 
 
 
 def public_item(item: dict) -> dict:
-    return {**item, "health": app_health(item), "public_url": f"{get_settings().fortune_origin.rstrip('/')}/"}
+    slug = item["slug"]
+    return {
+        "runtime_adapter": "fortune",
+        **item,
+        "health": app_health(item),
+        "public_url": f"{get_settings().fortune_origin.rstrip('/')}/{slug}",
+    }
 
 
 @router.get("")

@@ -163,7 +163,7 @@ BirthInput                        DreamInput
   "slug": "dream",
   "agent_id": "dream-analysis-agent",
   "runtime_adapter": "dream",
-  "enabled": true,
+  "enabled": false,
   "daily_limit": 3,
   "ttl_hours": 24,
   "max_questions": 20,
@@ -187,11 +187,14 @@ BirthInput                        DreamInput
 ```python
 class PublicAppAdapter(Protocol):
     id: str
+    invalid_input_code: str
+    invalid_input_message: str
 
+    def health(self) -> str: ...
     def metadata(self, app: dict) -> dict: ...
     async def prepare(self, payload: dict) -> PreparedPublicContext: ...
     def public_context(self, context: dict) -> dict: ...
-    def prompt_context(self, input_data: dict, context: dict) -> dict: ...
+    def prompt_blocks(self, input_data: dict, context: dict) -> list[str]: ...
     def report_instruction(self) -> str: ...
 ```
 
@@ -199,7 +202,8 @@ class PublicAppAdapter(Protocol):
 
 - `input_data`：通过 Adapter 模型验证后的用户输入。
 - `context`：服务端准备的产品上下文。
-- `initial_status`：知命为 `context_ready`，知梦也统一为 `context_ready`。
+
+新建会话的初始状态由共享 Runtime 统一写为 `context_ready`，不由 Adapter 自定义。
 
 Router 不再导入 `BirthInput`、城市目录或 `ChartClient`，只负责通用请求安全、身份、额度、会话和 Adapter 调度。
 
@@ -622,6 +626,8 @@ error
 | --- | --- | --- |
 | 梦境少于 20 字或超过 4000 字 | `INVALID_DREAM_INPUT` / 422 | 字段旁显示具体限制并保留输入 |
 | 情绪超过 3 个或包含未知值 | `INVALID_DREAM_INPUT` / 422 | 定位到情绪控件，不创建会话 |
+| 知命字段格式或组合不合法 | `INVALID_BIRTH_INPUT` / 422 | 定位到对应出生字段并保留输入 |
+| 创建会话请求不是合法 JSON 对象 | `INVALID_BIRTH_INPUT` 或 `INVALID_DREAM_INPUT` / 422 | 显示请求格式错误，不创建会话 |
 | 当前应用额度耗尽 | `DAILY_QUOTA_EXCEEDED` / 429 | 显示该应用的次日重置时间 |
 | Dream Adapter 未注册 | `APP_ADAPTER_NOT_FOUND` / 503 | 显示应用暂不可用，不暴露内部 ID |
 | 梦象索引损坏 | `DREAM_REFERENCE_UNAVAILABLE` / 503 | 不创建会话，不让 Agent 无引用运行 |
@@ -649,7 +655,7 @@ error
 
 - 现有 Public Run 事件和指标按 `app_id=dream` 自动隔离。
 - 管理后台应用列表显示 `runtime_adapter`、公开路径和健康状态。
-- dream 健康状态至少包含：`healthy`、`model_unavailable`、`adapter_unavailable`、`reference_unavailable`。
+- dream 健康状态至少包含：`ready`、`model_unavailable`、`adapter_unavailable`、`reference_unavailable`。
 - 管理运行详情不得显示完整梦境正文或近期背景，只显示已有脱敏事件。
 - 删除、TTL 清理和失败指标继续使用现有管理 API 与仪表盘。
 
@@ -732,10 +738,10 @@ error
 3. Bootstrap `dream-interpreter` 与 `dream-analysis-agent`，暂不启用公开 dream App；确认 Agent 在受控上下文下可稳定运行。
 4. 通用化 Public Runtime：Adapter Registry、`runtime_adapter`、`context_ready` 和通用 Context Prompt。
 5. 按 app_id 隔离额度，并通用化会话存储与公开 `context` 契约，兼容旧知命会话。
-6. 新增 Dream Adapter，接通已组装的知梦 Agent，再 Bootstrap 并启用 `dream` Published App。
+6. 新增 Dream Adapter，接通已组装的知梦 Agent，再 Bootstrap 默认禁用的 `dream` Published App。
 7. 将公开前端升级为双路由外壳，保留知命行为。
 8. 实现知梦表单、上下文摘要、报告、追问、恢复和删除。
-9. 补齐后端、前端、E2E 回归，运行 Agent 基准，并更新部署、Nginx、健康状态、许可证归属和运维文档。
+9. 补齐后端、前端、E2E 回归，运行 Agent 基准，并更新部署、Nginx、健康状态、许可证归属和运维文档；只有真实模型评测达到门槛并经人工审阅后，才在管理页启用 `dream` App。
 
 ## 21. 验收标准
 

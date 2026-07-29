@@ -16,6 +16,12 @@ from app.runs.router import router as runs_router
 from app.runtime.router import router as runtime_router
 from app.public_runtime.cleanup import cleanup_expired_sessions, cleanup_loop, stop_cleanup_task
 from app.public_runtime.admin_router import router as public_runs_admin_router
+from app.public_runtime.adapters.fortune import FortunePublicAdapter
+from app.public_runtime.adapters.registry import (
+    PublicAdapterRegistry,
+    configure_public_adapter_registry,
+)
+from app.fortune.chart_client import ChartClient
 from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.repository import PublicSessionRepository
 from app.public_runtime.quota import QuotaRepository
@@ -35,6 +41,11 @@ def create_app() -> FastAPI:
         bootstrap_workspace(settings.workspace_dir)
         bootstrap_fortune(settings.workspace_dir)
         bootstrap_dream_agent(settings.workspace_dir)
+        configure_public_adapter_registry(
+            PublicAdapterRegistry(
+                [FortunePublicAdapter(settings, ChartClient(settings.bazi_engine_url))]
+            )
+        )
         public_rate_limiter.clear()
         sessions = PublicSessionRepository(settings.workspace_dir / "public_sessions")
         quota = QuotaRepository(settings.workspace_dir / "public_usage")

@@ -18,3 +18,17 @@ class PublicAdapterRegistry:
 
     def ids(self) -> Sequence[str]:
         return tuple(sorted(self._items))
+
+
+_registry: PublicAdapterRegistry | None = None
+
+
+def configure_public_adapter_registry(registry: PublicAdapterRegistry) -> None:
+    global _registry
+    _registry = registry
+
+
+def get_public_adapter_registry() -> PublicAdapterRegistry:
+    if _registry is None:
+        raise AppError("APP_ADAPTER_NOT_FOUND", "发布应用暂不可用", 503)
+    return _registry

@@ -1,3 +1,4 @@
+import json
 from typing import Callable
 
 from fastapi import APIRouter, Request, Response
@@ -6,9 +7,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.config import get_settings
 from app.errors import AppError
-from app.fortune.chart_client import ChartClient
-from app.fortune.cities import city_records
-from app.fortune.models import BirthInput
+from app.public_runtime.adapters.base import PublicAppAdapter
+from app.public_runtime.adapters.registry import get_public_adapter_registry
 from app.public_runtime.identity import client_ip, hmac_hash, visitor_identity
 from app.public_runtime.metrics import PublicMetricsRepository
 from app.public_runtime.rate_limit import public_rate_limiter
@@ -23,7 +23,6 @@ from app.public_runtime.service import (
 from app.runtime.model_adapter import OpenAICompatibleAdapter
 
 router = APIRouter(prefix="/api/public/apps", tags=["公开应用"])
-chart_client_factory: Callable[[], ChartClient] = lambda: ChartClient(get_settings().bazi_engine_url)
 adapter_factory: Callable[[], object] = OpenAICompatibleAdapter
 MAX_PUBLIC_BODY_BYTES = 16 * 1024
 
@@ -54,23 +53,24 @@ def identities(request: Request, response: Response) -> tuple[str, str]:
     )
 
 
+def app_adapter(app: dict) -> PublicAppAdapter:
+    return get_public_adapter_registry().get(app.get("runtime_adapter", "fortune"))
+
+
 @router.get("/{slug}")
 def get_public_app(slug: str, request: Request, response: Response) -> dict:
     settings = get_settings()
     app = public_app(settings, slug)
+    adapter = app_adapter(app)
     owner_hash, ip_hash = identities(request, response)
     _, quota = repositories(settings)
-    locations = [
-        {key: record[key] for key in ("code", "parent_code", "name", "level")}
-        for record in city_records().values()
-    ]
     return {
         "name": app["name"],
         "slug": app["slug"],
         "daily_limit": app["daily_limit"],
         "ttl_hours": app["ttl_hours"],
         "max_questions": app["max_questions"],
-        "locations": locations,
+        **adapter.metadata(app),
         "quota": {
             "remaining": quota.remaining(app["id"], owner_hash, ip_hash, app["daily_limit"]),
             "resets_at": quota.resets_at(),
@@ -79,14 +79,22 @@ def get_public_app(slug: str, request: Request, response: Response) -> dict:
 
 
 @router.post("/{slug}/sessions", status_code=201)
-async def create_session(slug: str, payload: BirthInput, request: Request, response: Response) -> dict:
+async def create_session(slug: str, request: Request, response: Response) -> dict:
     require_origin(request)
     require_body_size(request)
     settings = get_settings()
     app = public_app(settings, slug)
+    adapter = app_adapter(app)
+    try:
+        payload = await request.json()
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise AppError(adapter.invalid_input_code, adapter.invalid_input_message, 422) from exc
+    if not isinstance(payload, dict):
+        raise AppError(adapter.invalid_input_code, adapter.invalid_input_message, 422)
     owner_hash, ip_hash = identities(request, response)
     public_rate_limiter.check(f"create:{ip_hash}", 5)
-    result = await create_public_session(settings, app, payload, owner_hash, ip_hash, chart_client_factory())
+    prepared = await adapter.prepare(payload)
+    result = await create_public_session(settings, app, prepared, owner_hash, ip_hash, adapter)
     _, quota = repositories(settings)
     result["quota"] = {
         "daily_limit": app["daily_limit"],
@@ -100,9 +108,10 @@ async def create_session(slug: str, payload: BirthInput, request: Request, respo
 def get_session(slug: str, session_id: str, request: Request, response: Response) -> dict:
     settings = get_settings()
     app = public_app(settings, slug)
+    adapter = app_adapter(app)
     owner_hash, _ = identities(request, response)
     sessions, session = owned_session(settings, app, session_id, owner_hash)
-    return session_payload(sessions, session, app)
+    return session_payload(sessions, session, app, adapter)
 
 
 @router.post("/{slug}/sessions/{session_id}/report")
@@ -110,6 +119,7 @@ def create_report(slug: str, session_id: str, request: Request, response: Respon
     require_origin(request)
     settings = get_settings()
     app = public_app(settings, slug)
+    public_adapter = app_adapter(app)
     owner_hash, ip_hash = identities(request, response)
     public_rate_limiter.check(f"report:{ip_hash}", 5)
     stream = public_agent_stream(
@@ -117,8 +127,9 @@ def create_report(slug: str, session_id: str, request: Request, response: Respon
         app,
         session_id,
         owner_hash,
-        "请根据可信命盘生成完整的初始解读报告。",
+        public_adapter.report_instruction(),
         "report",
+        public_adapter,
         adapter_factory,
     )
     return StreamingResponse(stream, media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
@@ -132,10 +143,18 @@ def ask_question(
     require_body_size(request)
     settings = get_settings()
     app = public_app(settings, slug)
+    public_adapter = app_adapter(app)
     owner_hash, ip_hash = identities(request, response)
     public_rate_limiter.check(f"question:{ip_hash}", 10)
     stream = public_agent_stream(
-        settings, app, session_id, owner_hash, payload.content, "question", adapter_factory
+        settings,
+        app,
+        session_id,
+        owner_hash,
+        payload.content,
+        "question",
+        public_adapter,
+        adapter_factory,
     )
     return StreamingResponse(stream, media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 

@@ -7,14 +7,11 @@ from pathlib import Path
 from time import monotonic
 from typing import Any, AsyncIterator, Callable
 from uuid import uuid4
-from zoneinfo import ZoneInfo
 
 from app.apps.repository import AppRepository
 from app.config import Settings
 from app.errors import AppError
-from app.fortune.chart_client import ChartClient
-from app.fortune.cities import resolve_city
-from app.fortune.models import BirthInput
+from app.public_runtime.adapters.base import PreparedPublicContext, PublicAppAdapter
 from app.public_runtime.events import PublicRunEventRepository
 from app.public_runtime.metrics import PublicMetricsRepository, SAFE_ERROR_CODES
 from app.public_runtime.prompt import build_system_prompt
@@ -25,7 +22,6 @@ from app.runtime.engine import AgentEngine
 from app.runtime.model_adapter import OpenAICompatibleAdapter
 from app.storage.collections import CollectionRepository
 
-CHINA_TZ = ZoneInfo("Asia/Shanghai")
 PUBLIC_EVENTS = {"message.delta", "message.completed", "run.completed", "run.failed"}
 
 
@@ -69,21 +65,11 @@ def safe_error_code(code: str) -> str:
 async def create_public_session(
     settings: Settings,
     app: dict,
-    birth: BirthInput,
+    prepared: PreparedPublicContext,
     owner_hash: str,
     ip_hash: str,
-    chart_client: ChartClient,
+    adapter: PublicAppAdapter,
 ) -> dict:
-    if birth.birth_date > datetime.now(CHINA_TZ).date():
-        raise AppError("INVALID_BIRTH_INPUT", "出生日期不能晚于今天", 422)
-    city = resolve_city(birth.province_code, birth.city_code)
-    engine_result = await chart_client.calculate(birth, city["longitude"])
-    chart = {
-        "input": birth.model_dump(mode="json"),
-        "calculation_policy": engine_result["policy"],
-        **engine_result["chart"],
-        "attribution": engine_result["attribution"],
-    }
     sessions, quota = repositories(settings)
     reservation_id = quota.reserve(app["id"], owner_hash, ip_hash, app["daily_limit"])
     now = datetime.now(UTC)
@@ -101,26 +87,35 @@ async def create_public_session(
         "expires_at": (now + timedelta(hours=app["ttl_hours"])).isoformat(),
     }
     try:
-        sessions.create(session, birth.model_dump(mode="json"), chart)
+        sessions.create(session, prepared.input_data, prepared.context)
     except Exception:
         quota.release(app["id"], owner_hash, ip_hash, reservation_id)
         raise
     _, metrics = telemetry_repositories(settings)
     metrics.session_created(app["id"])
-    return session_payload(sessions, session, app)
+    return session_payload(sessions, session, app, adapter)
 
 
-def session_payload(sessions: PublicSessionRepository, session: dict, app: dict) -> dict:
-    return {
+def session_payload(
+    sessions: PublicSessionRepository,
+    session: dict,
+    app: dict,
+    adapter: PublicAppAdapter,
+) -> dict:
+    context = adapter.public_context(sessions.context(session["id"]))
+    payload = {
         "session": {
             "id": session["id"],
             "status": session["status"],
             "expires_at": session["expires_at"],
             "remaining_questions": max(0, app["max_questions"] - session["question_count"]),
         },
-        "chart": sessions.chart(session["id"]),
+        "context": context,
         "messages": sessions.messages(session["id"]),
     }
+    if adapter.id == "fortune":
+        payload["chart"] = context
+    return payload
 
 
 def owned_session(settings: Settings, app: dict, session_id: str, owner_hash: str) -> tuple[PublicSessionRepository, dict]:
@@ -144,7 +139,11 @@ def owned_session(settings: Settings, app: dict, session_id: str, owner_hash: st
 
 
 def _model_context(
-    settings: Settings, app: dict, sessions: PublicSessionRepository, session: dict
+    settings: Settings,
+    app: dict,
+    sessions: PublicSessionRepository,
+    session: dict,
+    adapter: PublicAppAdapter,
 ) -> tuple[dict, list[dict], Path]:
     agent = CollectionRepository(settings.workspace_dir / "agents.json").get(app["agent_id"])
     model = CollectionRepository(settings.workspace_dir / "models.json").get(agent["model_id"])
@@ -153,8 +152,10 @@ def _model_context(
     system = build_system_prompt(
         settings.workspace_dir,
         agent,
-        sessions.chart(session["id"]),
-        sessions.birth_input(session["id"]),
+        adapter.prompt_blocks(
+            sessions.input_data(session["id"]),
+            sessions.context(session["id"]),
+        ),
     )
     messages = [{"role": "system", "content": system}]
     messages.extend(
@@ -172,6 +173,7 @@ def public_agent_stream(
     owner_hash: str,
     user_content: str,
     mode: str,
+    public_adapter: PublicAppAdapter,
     adapter_factory: Callable[[], Any] = OpenAICompatibleAdapter,
 ) -> AsyncIterator[str]:
     sessions, _ = owned_session(settings, app, session_id, owner_hash)
@@ -197,7 +199,9 @@ def public_agent_stream(
             raise
         session = sessions.update(session_id, {"reservation_id": reservation_id, "updated_at": timestamp()})
     try:
-        model, messages, workspace = _model_context(settings, app, sessions, session)
+        model, messages, workspace = _model_context(
+            settings, app, sessions, session, public_adapter
+        )
     except AppError:
         if mode == "report":
             _, quota = repositories(settings)

@@ -1,21 +1,17 @@
+from app.config import get_settings
+from app.public_runtime.adapters.fortune import FortunePublicAdapter
 from app.public_runtime.prompt import build_system_prompt
 
 
 def test_public_run_events_do_not_duplicate_private_runtime_content(
     client, workspace, monkeypatch
 ):
-    from app.public_runtime import router
     from tests.test_public_runtime_api import (
-        FakeChartClient,
-        RecordingAdapter,
         birth_payload,
-        enable_model,
+        configure_fakes,
     )
 
-    enable_model(workspace)
-    RecordingAdapter.calls.clear()
-    monkeypatch.setattr(router, "chart_client_factory", FakeChartClient)
-    monkeypatch.setattr(router, "adapter_factory", RecordingAdapter)
+    configure_fakes(monkeypatch, workspace)
     created = client.post(
         "/api/public/apps/fortune/sessions",
         json=birth_payload(),
@@ -43,12 +39,17 @@ def test_public_run_events_do_not_duplicate_private_runtime_content(
 
 
 def test_prompt_keeps_untrusted_instructions_outside_trusted_chart(client, workspace):
+    from tests.test_public_runtime_api import FakeChartClient
+
     agent = next(item for item in client.get("/api/agents").json() if item["id"] == "fortune-bazi-agent")
+    adapter = FortunePublicAdapter(get_settings(), FakeChartClient())
     prompt = build_system_prompt(
         workspace,
         agent,
-        {"chart": {"pillars": {"day": "甲午"}}},
-        {"focus_topics": ["career"]},
+        adapter.prompt_blocks(
+            {"focus_topics": ["career"]},
+            {"kind": "fortune", "pillars": {"day": "甲午"}},
+        ),
     )
     assert "不得自行排盘" in prompt
     assert "不预测死亡" in prompt

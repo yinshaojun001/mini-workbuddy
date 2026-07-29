@@ -82,10 +82,20 @@ def test_public_monitoring_keeps_sensitive_data_out_of_default_and_permanent_sto
     monkeypatch,
 ):
     from app.public_runtime import router
+    from app.config import get_settings
+    from app.public_runtime.adapters.fortune import FortunePublicAdapter
+    from app.public_runtime.adapters.registry import (
+        PublicAdapterRegistry,
+        configure_public_adapter_registry,
+    )
 
     _enable_model(workspace)
     PrivacyAdapter.calls = 0
-    monkeypatch.setattr(router, "chart_client_factory", PrivacyChartClient)
+    configure_public_adapter_registry(
+        PublicAdapterRegistry(
+            [FortunePublicAdapter(get_settings(), PrivacyChartClient())]
+        )
+    )
     monkeypatch.setattr(router, "adapter_factory", PrivacyAdapter)
 
     created = client.post(

@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.apps.repository import AppRepository
 from app.config import get_settings
 from app.errors import AppError
+from app.public_runtime.adapters.registry import get_public_adapter_registry
 from app.storage.collections import CollectionRepository
 
 router = APIRouter(prefix="/api/apps", tags=["发布应用"])
@@ -47,6 +48,14 @@ def app_health(
     if not item["enabled"]:
         return "disabled"
     settings = get_settings()
+    try:
+        adapter_health = get_public_adapter_registry().get(
+            item.get("runtime_adapter", "fortune")
+        ).health()
+    except AppError:
+        return "adapter_unavailable"
+    if adapter_health != "ready":
+        return "reference_unavailable" if adapter_health == "reference_unavailable" else "adapter_unavailable"
     try:
         agent = CollectionRepository(settings.workspace_dir / "agents.json").get(item["agent_id"])
         model = CollectionRepository(settings.workspace_dir / "models.json").get(agent["model_id"])

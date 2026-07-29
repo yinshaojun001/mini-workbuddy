@@ -13,6 +13,9 @@ SENTINEL_REPORT = f"REPORT_SENTINEL_4Q2：{SENTINEL_NAME} 生于 {SENTINEL_DATE}
 SENTINEL_ANSWER = f"ANSWER_SENTINEL_8M3：{SENTINEL_NAME} 的出生时间是 {SENTINEL_TIME}"
 SENTINEL_API_KEY = "API_KEY_SENTINEL_NEVER_PERSIST"
 SENTINEL_CHART_PRIVATE = "CHART_PRIVATE_SENTINEL_NEVER_RETURN"
+DREAM_TEXT_SENTINEL = "DREAM_TEXT_SENTINEL_2F8"
+DREAM_CONTEXT_SENTINEL = "DREAM_CONTEXT_SENTINEL_6K1"
+DREAM_REPORT_SENTINEL = "DREAM_REPORT_SENTINEL_9P4"
 
 
 class PrivacyChartClient:
@@ -48,6 +51,13 @@ class PrivacyAdapter:
         self.__class__.calls += 1
         content = SENTINEL_REPORT if self.calls == 1 else SENTINEL_ANSWER
         return {"content": content, "tool_calls": []}
+
+
+class DreamPrivacyAdapter:
+    async def complete(self, model, messages, tools):
+        assert model["api_key"] == SENTINEL_API_KEY
+        assert tools == []
+        return {"content": DREAM_REPORT_SENTINEL, "tool_calls": []}
 
 
 def _enable_model(workspace) -> None:
@@ -268,3 +278,87 @@ def test_public_monitoring_keeps_sensitive_data_out_of_default_and_permanent_sto
         json.dumps(metrics_after_delete, ensure_ascii=False),
         (session_id, SENTINEL_NAME, SENTINEL_QUESTION, SENTINEL_REPORT, SENTINEL_ANSWER),
     )
+
+
+def test_dream_monitoring_and_management_never_expose_private_markers(
+    client,
+    workspace,
+    monkeypatch,
+):
+    from app.public_runtime import router
+    from app.public_runtime.adapters.dream import DreamPublicAdapter
+    from app.public_runtime.adapters.registry import (
+        PublicAdapterRegistry,
+        configure_public_adapter_registry,
+    )
+    from tests.test_dream_public_adapter import reference_path
+    from tests.test_dream_public_api import enable_dream_app
+
+    _enable_model(workspace)
+    enable_dream_app(workspace)
+    configure_public_adapter_registry(
+        PublicAdapterRegistry([DreamPublicAdapter.from_path(reference_path())])
+    )
+    monkeypatch.setattr(router, "adapter_factory", DreamPrivacyAdapter)
+    private_values = (
+        DREAM_TEXT_SENTINEL,
+        DREAM_CONTEXT_SENTINEL,
+        DREAM_REPORT_SENTINEL,
+    )
+    created = client.post(
+        "/api/public/apps/dream/sessions",
+        json={
+            "dream_text": f"我梦见旧屋积水，醒来后仍记得这个标记 {DREAM_TEXT_SENTINEL}。",
+            "emotions": ["焦虑"],
+            "recurring": False,
+            "recent_context": f"最近的现实背景标记是 {DREAM_CONTEXT_SENTINEL}。",
+        },
+        headers=ORIGIN,
+    )
+    assert created.status_code == 201, created.text
+    session_id = created.json()["session"]["id"]
+
+    report = client.post(
+        f"/api/public/apps/dream/sessions/{session_id}/report",
+        headers=ORIGIN,
+    )
+    assert report.status_code == 200, report.text
+    assert DREAM_REPORT_SENTINEL in report.text
+
+    session_dir = workspace / "public_sessions" / session_id
+    allowed_session_text = (session_dir / "input.json").read_text(encoding="utf-8")
+    allowed_messages_text = (session_dir / "messages.json").read_text(encoding="utf-8")
+    assert DREAM_TEXT_SENTINEL in allowed_session_text
+    assert DREAM_CONTEXT_SENTINEL in allowed_session_text
+    assert DREAM_REPORT_SENTINEL in allowed_messages_text
+
+    event_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted((session_dir / "runs").glob("*.jsonl"))
+    )
+    _assert_absent(event_text, private_values)
+
+    metrics_text = (workspace / "public_metrics.json").read_text(encoding="utf-8")
+    _assert_absent(metrics_text, (session_id, *private_values))
+    assert json.loads(metrics_text)["apps"]["dream"]["runs_completed"] == 1
+
+    sse_events = [
+        json.loads(line.removeprefix("data: "))
+        for line in report.text.splitlines()
+        if line.startswith("data: ")
+    ]
+    sse_metadata = [
+        {**event, "data": {key: value for key, value in event["data"].items() if key != "content"}}
+        for event in sse_events
+    ]
+    _assert_absent(json.dumps(sse_metadata, ensure_ascii=False), private_values)
+
+    for include_sensitive in (False, True):
+        detail = client.get(
+            f"/api/public-runs/{session_id}",
+            params={"include_sensitive": str(include_sensitive).lower()},
+        )
+        assert detail.status_code == 200, detail.text
+        serialized = json.dumps(detail.json(), ensure_ascii=False)
+        _assert_absent(serialized, private_values)
+        assert detail.json()["messages"] == []

@@ -45,8 +45,9 @@ describe('DreamForm', () => {
     expect(wrapper.get('.primary-command').attributes('disabled')).toBeUndefined()
     expect(wrapper.text()).toContain('20/4000')
 
-    await wrapper.setProps({ remaining: 0 })
+    await wrapper.setProps({ remaining: 0, resetsAt: '2026-07-30T00:00:00+08:00' })
     expect(wrapper.get('.primary-command').text()).toBe('今日额度已用完')
     expect(wrapper.get('.primary-command').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('.quota-reset').text()).toContain('后恢复')
   })
 })

@@ -107,7 +107,7 @@ onMounted(initialize)
   >
     <div v-if="error" class="error-banner">{{ error }}<button title="关闭" @click="error = ''">×</button></div>
     <div v-if="state === 'loading' && !current" class="loading-state"><span>知</span><p>正在读取梦象资料</p></div>
-    <DreamForm v-else-if="state === 'form' && metadata" :emotions="metadata.form.emotions.options" :max-emotions="metadata.form.emotions.max_items" :remaining="metadata.quota.remaining" :loading="false" @submit="begin" />
+    <DreamForm v-else-if="state === 'form' && metadata" :emotions="metadata.form.emotions.options" :max-emotions="metadata.form.emotions.max_items" :remaining="metadata.quota.remaining" :resets-at="metadata.quota.resets_at" :loading="false" @submit="begin" />
     <template v-else-if="current">
       <div class="report-topline"><div><span>梦境编号</span><b>{{ current.session.id.slice(0, 8) }}</b></div><div><span>资料到期</span><b>{{ new Date(current.session.expires_at).toLocaleString('zh-CN', { hour12: false }) }}</b></div><button v-if="state === 'context_ready'" class="retry-command" @click="generateReport"><RotateCcw :size="14" />生成解读</button></div>
       <DreamContext :context="current.context" :dream-text="dreamSketch" />

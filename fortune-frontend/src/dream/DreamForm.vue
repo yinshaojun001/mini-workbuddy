@@ -7,6 +7,7 @@ const props = defineProps<{
   emotions: string[]
   maxEmotions: number
   remaining: number
+  resetsAt?: string
   loading: boolean
 }>()
 const emit = defineEmits<{ submit: [payload: DreamPayload] }>()
@@ -81,6 +82,7 @@ function submit() {
     </div>
 
     <button class="primary-command" type="submit" :disabled="!canSubmit">{{ remaining < 1 ? '今日额度已用完' : '开始解梦' }}</button>
+    <p v-if="remaining < 1 && resetsAt" class="quota-reset">{{ new Date(resetsAt).toLocaleString('zh-CN', { hour12: false }) }} 后恢复</p>
     <p class="privacy-line">梦境资料仅用于本次匿名会话，24 小时后清除</p>
   </form>
 </template>

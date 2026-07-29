@@ -123,3 +123,6 @@ jobs:
           ssh -i ~/.ssh/mini-workbuddy-deploy -p "$SERVER_PORT" \
             "${SERVER_USER}@${SERVER_HOST}" \
             "bash /opt/mini-workbuddy/releases/${GITHUB_SHA}/server-deploy.sh ${GITHUB_SHA}"
+
+      - name: Verify deployed public routes
+        run: bash deploy/verify-public-routes.sh https://fortune.inshocking.com

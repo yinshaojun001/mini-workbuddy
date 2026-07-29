@@ -11,7 +11,9 @@ def test_dream_agent_is_installed_without_tools(client, workspace):
     assert agent["skill_ids"] == [SKILL_ID]
     assert (workspace / "skills" / SKILL_ID / "SKILL.md").is_file()
     apps = json.loads((workspace / "apps.json").read_text(encoding="utf-8"))
-    assert not any(item["id"] == "dream" for item in apps)
+    dream = next(item for item in apps if item["id"] == "dream")
+    assert dream["runtime_adapter"] == "dream"
+    assert dream["enabled"] is False
 
 
 def test_dream_bootstrap_preserves_existing_resources(client, workspace):

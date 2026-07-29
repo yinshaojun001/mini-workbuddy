@@ -1,4 +1,4 @@
-from app.public_runtime.identity import hmac_hash, parse_token, visitor_identity
+from app.public_runtime.identity import COOKIE_NAME, COOKIE_PATH, hmac_hash, parse_token
 
 
 def test_signed_visitor_cookie_rejects_tampering():
@@ -15,4 +15,5 @@ def test_public_metadata_sets_hardened_anonymous_cookie(client):
     assert "fortune_visitor=" in cookie
     assert "HttpOnly" in cookie
     assert "SameSite=lax" in cookie
-    assert "Path=/api/public/apps/fortune" in cookie
+    assert f"Path={COOKIE_PATH}" in cookie
+    assert client.cookies.get(COOKIE_NAME) is not None

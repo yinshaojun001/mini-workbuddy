@@ -5,6 +5,7 @@ from app.storage.json_store import AtomicJsonStore
 
 SKILL_ID = "dream-interpreter"
 AGENT_ID = "dream-analysis-agent"
+APP_ID = "dream"
 
 
 def _asset(name: str) -> str:
@@ -60,3 +61,27 @@ def bootstrap_dream_agent(root: Path) -> None:
         }
     )
     agents_store.write(agents)
+
+
+def bootstrap_dream_app(root: Path) -> None:
+    timestamp = datetime.now(UTC).isoformat()
+    apps_store = AtomicJsonStore(root / "apps.json", [])
+    apps = apps_store.read()
+    if any(item["id"] == APP_ID or item["slug"] == APP_ID for item in apps):
+        return
+    apps.append(
+        {
+            "id": APP_ID,
+            "name": "知梦",
+            "slug": "dream",
+            "agent_id": AGENT_ID,
+            "runtime_adapter": "dream",
+            "enabled": False,
+            "daily_limit": 3,
+            "ttl_hours": 24,
+            "max_questions": 20,
+            "created_at": timestamp,
+            "updated_at": timestamp,
+        }
+    )
+    apps_store.write(apps)

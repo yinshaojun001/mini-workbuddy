@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +9,7 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.errors import register_error_handlers
 from app.apps.router import router as apps_router
-from app.bootstrap.dream import bootstrap_dream_agent
+from app.bootstrap.dream import bootstrap_dream_agent, bootstrap_dream_app
 from app.bootstrap.fortune import bootstrap_fortune
 from app.agents.router import router as agents_router
 from app.models.router import router as models_router
@@ -17,6 +18,7 @@ from app.runtime.router import router as runtime_router
 from app.public_runtime.cleanup import cleanup_expired_sessions, cleanup_loop, stop_cleanup_task
 from app.public_runtime.admin_router import router as public_runs_admin_router
 from app.public_runtime.adapters.fortune import FortunePublicAdapter
+from app.public_runtime.adapters.dream import DreamPublicAdapter
 from app.public_runtime.adapters.registry import (
     PublicAdapterRegistry,
     configure_public_adapter_registry,
@@ -33,6 +35,12 @@ from app.storage.bootstrap import bootstrap_workspace
 from app.tools.router import router as tools_router
 
 
+DREAM_REFERENCE_PATH = (
+    Path(__file__).parent
+    / "bootstrap/assets/dream-interpreter/references/dream-symbols.json"
+)
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
 
@@ -41,9 +49,13 @@ def create_app() -> FastAPI:
         bootstrap_workspace(settings.workspace_dir)
         bootstrap_fortune(settings.workspace_dir)
         bootstrap_dream_agent(settings.workspace_dir)
+        bootstrap_dream_app(settings.workspace_dir)
         configure_public_adapter_registry(
             PublicAdapterRegistry(
-                [FortunePublicAdapter(settings, ChartClient(settings.bazi_engine_url))]
+                [
+                    FortunePublicAdapter(settings, ChartClient(settings.bazi_engine_url)),
+                    DreamPublicAdapter.from_path(DREAM_REFERENCE_PATH),
+                ]
             )
         )
         public_rate_limiter.clear()

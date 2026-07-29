@@ -12,6 +12,8 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ submit: [payload: DreamPayload] }>()
 const showRecentContext = ref(false)
+const dreamTextInput = ref<HTMLTextAreaElement | null>(null)
+const validationMessage = ref('')
 
 const form = reactive({
   dream_text: '',
@@ -21,7 +23,7 @@ const form = reactive({
 })
 
 const dreamLength = computed(() => form.dream_text.trim().length)
-const canSubmit = computed(() => !props.loading && props.remaining > 0 && dreamLength.value >= 20 && dreamLength.value <= 4000)
+const canSubmit = computed(() => !props.loading && props.remaining > 0)
 
 function toggleEmotion(value: string) {
   if (form.emotions.includes(value)) {
@@ -33,6 +35,12 @@ function toggleEmotion(value: string) {
 
 function submit() {
   if (!canSubmit.value) return
+  if (dreamLength.value < 20) {
+    validationMessage.value = `请再补充 ${20 - dreamLength.value} 个字的梦境正文`
+    dreamTextInput.value?.focus()
+    return
+  }
+  validationMessage.value = ''
   emit('submit', {
     dream_text: form.dream_text.trim(),
     emotions: [...form.emotions],
@@ -43,7 +51,7 @@ function submit() {
 </script>
 
 <template>
-  <form class="birth-form dream-form" @submit.prevent="submit">
+  <form class="birth-form dream-form" novalidate @submit.prevent="submit">
     <div class="form-intro">
       <div><span class="section-number">01</span><h2>记录梦境</h2></div>
       <span class="quota">今日剩余 {{ remaining }} 次</span>
@@ -51,7 +59,10 @@ function submit() {
 
     <div class="field">
       <label for="dream-text">梦境正文 <small>{{ dreamLength }}/4000</small></label>
-      <textarea id="dream-text" v-model="form.dream_text" class="dream-textarea" minlength="20" maxlength="4000" rows="8" :disabled="loading || remaining < 1" placeholder="写下梦里发生了什么、出现了谁、醒来时最强烈的感受" />
+      <textarea id="dream-text" ref="dreamTextInput" v-model="form.dream_text" class="dream-textarea" minlength="20" maxlength="4000" rows="8" :disabled="loading || remaining < 1" aria-describedby="dream-text-requirement" placeholder="写下梦里发生了什么、出现了谁、醒来时最强烈的感受" @input="validationMessage = ''" />
+      <p id="dream-text-requirement" class="field-requirement" :class="{ invalid: validationMessage }" aria-live="polite">
+        {{ validationMessage || '梦境正文至少 20 字；近期背景为可选补充' }}
+      </p>
     </div>
 
     <div class="field">
@@ -81,7 +92,7 @@ function submit() {
       <textarea id="recent-context" v-model="form.recent_context" class="dream-textarea compact" maxlength="500" rows="4" :disabled="loading" placeholder="可以补充最近的压力、变化或牵挂" />
     </div>
 
-    <button class="primary-command" type="submit" :disabled="!canSubmit">{{ remaining < 1 ? '今日额度已用完' : '开始解梦' }}</button>
+    <button class="primary-command" type="submit" :disabled="!canSubmit">{{ remaining < 1 ? '今日额度已用完' : loading ? '正在解梦' : '开始解梦' }}</button>
     <p v-if="remaining < 1 && resetsAt" class="quota-reset">{{ new Date(resetsAt).toLocaleString('zh-CN', { hour12: false }) }} 后恢复</p>
     <p class="privacy-line">梦境资料仅用于本次匿名会话，24 小时后清除</p>
   </form>

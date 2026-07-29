@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
 
 from app.storage.json_store import AtomicJsonStore
@@ -6,6 +7,9 @@ from app.storage.json_store import AtomicJsonStore
 SKILL_ID = "dream-interpreter"
 AGENT_ID = "dream-analysis-agent"
 APP_ID = "dream"
+LEGACY_AGENT_PROMPT_SHA256S = {
+    "51bb6b6f9003d2dab82d5b912a5086454680d604b9cdb2444fd91a8df2051ff7",
+}
 
 
 def _asset(name: str) -> str:
@@ -35,8 +39,11 @@ def bootstrap_dream_agent(root: Path) -> None:
     prompt_root = root / "agents" / AGENT_ID
     prompt_root.mkdir(parents=True, exist_ok=True)
     prompt_path = prompt_root / "agent.md"
+    bundled_prompt = _asset("dream-agent.md")
     if not prompt_path.exists():
-        prompt_path.write_text(_asset("dream-agent.md"), encoding="utf-8")
+        prompt_path.write_text(bundled_prompt, encoding="utf-8")
+    elif sha256(prompt_path.read_bytes()).hexdigest() in LEGACY_AGENT_PROMPT_SHA256S:
+        prompt_path.write_text(bundled_prompt, encoding="utf-8")
 
     agents_store = AtomicJsonStore(root / "agents.json", [])
     agents = agents_store.read()

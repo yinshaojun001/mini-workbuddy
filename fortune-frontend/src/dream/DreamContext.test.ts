@@ -11,7 +11,7 @@ describe('DreamContext', () => {
           kind: 'dream',
           summary: { emotions: [], recurring: false },
           symbols: [],
-          reference_index_version: '1.0.0',
+          reference_index_version: '1.0.1',
         },
       },
     })

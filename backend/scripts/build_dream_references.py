@@ -16,7 +16,7 @@ UPSTREAM_ROOT = ".claude/skills/zhougong-dream-interpretation/references/zhougon
 EXPECTED_CATEGORY_COUNT = 27
 EXPECTED_QUOTE_COUNT = 988
 SOURCE_ID = "zhougong-public-domain-v1"
-INDEX_VERSION = "1.0.0"
+INDEX_VERSION = "1.0.1"
 GENERATED_ON = "2026-07-29"
 
 CATEGORY_FILES = (
@@ -83,11 +83,11 @@ CURATED_SYMBOLS = (
     curated("door", "门", ("门", "門", "门口", "門口", "大门", "大門"), "門戶井灶廚廁", "08-menhu-jingzao-chuce.md", "門戶忽開主大吉"),
     curated("mirror", "镜子", ("镜子", "鏡子", "镜", "鏡", "明镜", "明鏡"), "鏡環釵釧梳篦", "10-jinghuan-chaichuan-shubi.md", "明鏡者吉暗者凶"),
     curated("boat", "船", ("船", "船只", "船隻", "小船", "舟"), "船車遊行物件", "12-chuanche-youxing-wujian.md", "乘船風帆大吉利"),
-    curated("car", "汽车", ("汽车", "汽車", "车", "車", "轿车", "轎車"), "船車遊行物件", "12-chuanche-youxing-wujian.md", "車行主百事順和"),
-    curated("road", "道路", ("道路", "路", "路上", "大路", "岔路"), "道路橋梁市集", "13-daolu-qiaoliang-shiji.md", "見四路通名利遂"),
+    curated("car", "汽车", ("汽车", "汽車", "轿车", "轎車"), "船車遊行物件", "12-chuanche-youxing-wujian.md", "車行主百事順和"),
+    curated("road", "道路", ("道路", "路上", "路边", "路邊", "小路", "公路", "大路", "岔路"), "道路橋梁市集", "13-daolu-qiaoliang-shiji.md", "見四路通名利遂"),
     curated("bridge", "桥", ("桥", "橋", "桥梁", "橋梁", "过桥", "過橋"), "道路橋梁市集", "13-daolu-qiaoliang-shiji.md", "修橋樑者萬事和"),
     curated("coffin", "棺材", ("棺材", "棺木", "棺", "棺椁", "棺槨"), "塚墓棺槨迎送", "16-zhongmu-guanguo-yingsong.md", "新塚棺槨主憂除"),
-    curated("death", "死亡", ("死亡", "去世", "死人", "死去", "过世", "過世"), "哀樂病死歌唱", "18-aile-bingsi-gechang.md", "見人死自死者吉"),
+    curated("death", "死亡", ("死亡", "死人", "死去", "已经离世", "已經離世", "离世的亲人", "離世的親人", "已故亲人", "已故親人"), "哀樂病死歌唱", "18-aile-bingsi-gechang.md", "見人死自死者吉"),
     curated("ghost", "鬼", ("鬼", "鬼魂", "幽灵", "幽靈", "鬼怪"), "佛道僧尼鬼神", "19-fodao-sengni-guishen.md", "與鬼鬥者主延壽"),
     curated("fight", "打斗", ("打斗", "打鬥", "打架", "争斗", "爭鬥", "搏斗", "搏鬥"), "被害鬥傷打罵", "20-beihai-doushang-dama.md", "家中人鬥主分散"),
     curated("prison", "监狱", ("监狱", "監獄", "牢狱", "牢獄", "牢房", "坐牢"), "捕禁刑罰獄具", "21-bujin-xingfa-yuju.md", "坐獄中必有恩赦"),
@@ -99,14 +99,14 @@ CURATED_SYMBOLS = (
     curated("tiger", "老虎", ("老虎", "虎", "猛虎", "白虎"), "龍蛇禽獸等類", "25-longshe-qinshou-denglei.md", "猛虎大吼主得官"),
     curated("dog", "狗", ("狗", "犬", "小狗", "恶狗", "惡狗"), "牛馬豬羊六畜", "26-niuma-zhuyang-liuchu.md", "犬吠主人失財凶"),
     curated("cat", "猫", ("猫", "貓", "小猫", "小貓", "白猫", "白貓"), "龍蛇禽獸等類", "25-longshe-qinshou-denglei.md", "貓捕鼠者大得財"),
-    curated("horse", "马", ("马", "馬", "马匹", "馬匹", "白马", "白馬"), "牛馬豬羊六畜", "26-niuma-zhuyang-liuchu.md", "馬行千里大喜至"),
+    curated("horse", "马", ("马匹", "馬匹", "一匹马", "一匹馬", "白马", "白馬"), "牛馬豬羊六畜", "26-niuma-zhuyang-liuchu.md", "馬行千里大喜至"),
     curated("cow", "牛", ("牛", "黄牛", "黃牛", "水牛", "小牛"), "牛馬豬羊六畜", "26-niuma-zhuyang-liuchu.md", "牛出門好事立至"),
     curated("pig", "猪", ("猪", "豬", "小猪", "小豬", "野猪", "野豬"), "牛馬豬羊六畜", "26-niuma-zhuyang-liuchu.md", "殺豬吉豬自死凶"),
     curated("fish", "鱼", ("鱼", "魚", "鱼群", "魚群", "鲤鱼", "鯉魚"), "龜鱉魚蝦昆蟲", "27-guibie-yuxia-kunchong.md", "群魚游水主有財"),
     curated("turtle", "乌龟", ("乌龟", "烏龜", "龟", "龜", "海龟", "海龜"), "龜鱉魚蝦昆蟲", "27-guibie-yuxia-kunchong.md", "見龜者主女人貴"),
     curated("insect", "昆虫", ("昆虫", "昆蟲", "虫子", "蟲子", "飞虫", "飛蟲"), "龜鱉魚蝦昆蟲", "27-guibie-yuxia-kunchong.md", "身坐魚蟲病患除"),
     curated("flying", "飞行", ("飞行", "飛行", "飞起来", "飛起來", "飞上天", "飛上天"), "天地日月星辰", "01-tiandi-riyue-xingchen.md", "飛上天富貴大吉"),
-    curated("falling", "坠落", ("坠落", "墜落", "掉下", "掉下来", "掉下來", "跌落", "下坠", "下墜"), "門戶井灶廚廁", "08-menhu-jingzao-chuce.md", "身墜井中疾病凶"),
+    curated("falling", "坠落", ("坠落", "墜落", "掉下", "掉下来", "掉下來", "跳下", "跳楼", "跳樓", "跌落", "下坠", "下墜"), "門戶井灶廚廁", "08-menhu-jingzao-chuce.md", "身墜井中疾病凶"),
 )
 
 

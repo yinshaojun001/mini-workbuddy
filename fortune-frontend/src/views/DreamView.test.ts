@@ -35,7 +35,7 @@ const created: DreamSessionPayload = {
     kind: 'dream',
     summary: { emotions: ['焦虑'], recurring: false },
     symbols: [{ id: 'house', label: '房屋' }],
-    reference_index_version: '1.0.0',
+    reference_index_version: '1.0.1',
   },
   messages: [],
 }

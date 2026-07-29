@@ -1,5 +1,7 @@
 import json
+from hashlib import sha256
 
+from app.bootstrap import dream
 from app.bootstrap.dream import AGENT_ID, SKILL_ID, bootstrap_dream_agent
 
 
@@ -61,3 +63,19 @@ def test_dream_assets_define_structure_and_safety_boundaries(client, workspace):
     ):
         assert heading in skill
     assert "没有找到直接对应的传统条目" in skill
+
+
+def test_dream_bootstrap_migrates_only_an_unchanged_legacy_prompt(
+    client, workspace, monkeypatch
+):
+    prompt = workspace / "agents" / AGENT_ID / "agent.md"
+    prompt.write_text("旧内置 prompt", encoding="utf-8")
+    monkeypatch.setattr(
+        dream,
+        "LEGACY_AGENT_PROMPT_SHA256S",
+        {sha256("旧内置 prompt".encode()).hexdigest()},
+    )
+
+    bootstrap_dream_agent(workspace)
+
+    assert "固定分流用语" in prompt.read_text(encoding="utf-8")

@@ -4,7 +4,7 @@ const dreamContext = {
   kind: 'dream',
   summary: { emotions: ['焦虑', '怀念'], recurring: false },
   symbols: [{ id: 'house', label: '房屋' }, { id: 'water', label: '水' }],
-  reference_index_version: '1.0.0',
+  reference_index_version: '1.0.1',
 }
 const dreamSession = { id: 'dream-12345678', status: 'context_ready', expires_at: '2026-07-30T10:00:00Z', remaining_questions: 20 }
 const locations = [{ code: '110000', parent_code: 'CN', name: '北京市', level: 'province' }, { code: '110100', parent_code: '110000', name: '北京市', level: 'city' }]
